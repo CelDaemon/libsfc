@@ -1,6 +1,8 @@
 #include "sfc.h"
 
 #include <assert.h>
+#include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +14,7 @@
  * @attention Seeks to end of file
  */
 static size_t file_size(FILE * const file) {
+    assert(file != nullptr);
     fseek(file, 0, SEEK_END);
     return ftell(file);
 }
@@ -58,10 +61,17 @@ bool sfc_load_rom(const char *path, const enum sfc_mapping mapping, const bool c
     if (ferror(file))
         goto error_2;
 
+    if (size <= header_offset(mapping, copier) + header_size) {
+        errno = EINVAL;
+        goto error_2;
+    }
+
+    // TODO Infer the mapping based on ROM contents
+
+
     if (fclose(file) == EOF)
         goto error_2;
 
-    // TODO Infer the mapping based on ROM contents
 
 
 
@@ -83,8 +93,31 @@ error_1:
     return false;
 }
 
+bool sfc_save_rom(const struct sfc_rom *rom, const char *path) {
+    assert(rom != nullptr);
+    assert(path != nullptr);
+
+    auto const file = fopen(path, "wb");
+
+    if (file == nullptr)
+        return false;
+
+    if (!fwrite(rom->data, rom->size, 1, file))
+        goto error_1;
+
+    if (fclose(file) == EOF)
+        goto error_1;
+
+    return true;
+
+error_1:
+    fclose(file);
+
+    return false;
+}
+
 void sfc_unload_rom(struct sfc_rom *rom) {
+    assert(rom != nullptr);
     free(rom->data);
     rom->data = nullptr;
 }
-

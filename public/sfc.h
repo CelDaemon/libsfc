@@ -1,6 +1,7 @@
 #pragma once
-#include <stdint.h>
 #include <stddef.h>
+
+auto constexpr max_title_length = 21;
 
 enum sfc_mapping {
     SFC_MAP_SMART, // Unspecified, requires inferring the mapping
@@ -15,7 +16,7 @@ enum sfc_mapping {
 #define SFC_MAP_CONCRETE(mapping) mapping >= SFC_MAP__CONCRETE_FIRST && mapping <= SFC_MAP__CONCRETE_LAST
 
 struct sfc_rom {
-    uint8_t *data;
+    void *data;
     size_t size;
     enum sfc_mapping mapping;
     bool copier;
@@ -26,3 +27,7 @@ struct sfc_rom {
 
 bool sfc_load_rom(const char *path, enum sfc_mapping mapping, bool copier, struct sfc_rom *rom);
 void sfc_unload_rom(struct sfc_rom *rom);
+bool sfc_save_rom(const struct sfc_rom *rom, const char *path);
+
+bool sfc_rom_title(const struct sfc_rom *rom, char title[static max_title_length + 1]);
+bool sfc_set_rom_title(const struct sfc_rom *rom, const char *title);

@@ -1,8 +1,10 @@
 #pragma once
 #include <stdint.h>
 
+#include "sfc.h"
+
 struct sfc_header {
-    char title[21];
+    char title[max_title_length];
     uint8_t rom_mode;
     uint8_t chipset;
     uint8_t rom_size;
@@ -13,3 +15,7 @@ struct sfc_header {
     uint16_t checksum_complement;
     uint16_t checksum;
 };
+
+
+
+auto constexpr header_size = sizeof(struct sfc_header);

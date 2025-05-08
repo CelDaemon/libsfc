@@ -6,10 +6,11 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 
 add_library(sfc STATIC
-        sfc.c
         public/sfc.h
+        rom.c
         mapping.h
         header.h
+        header.c
 )
 target_include_directories(sfc PUBLIC public/)
 target_compile_options(sfc PRIVATE -Wall -Wextra)
