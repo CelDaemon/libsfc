@@ -9,9 +9,8 @@ add_library(sfc STATIC
         public/sfc.h
         rom.c
         mapping.h
-        header.h
         header.c
 )
 target_include_directories(sfc PUBLIC public/)
-target_compile_options(sfc PRIVATE -Wall -Wextra)
+target_compile_options(sfc PRIVATE -Wall -Wextra -Wpedantic)
 add_subdirectory(example)

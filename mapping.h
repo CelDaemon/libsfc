@@ -1,12 +1,11 @@
 #pragma once
 
-#include <assert.h>
-
 #include "sfc.h"
-#include "header.h"
+
+#include <stddef.h>
 auto constexpr copier_size = 512;
 
-inline static size_t raw_header_offset(const enum sfc_mapping mapping) {
+inline static size_t raw_header_offset(const enum sfc_map mapping) {
     switch (mapping) {
         case SFC_MAP_LO:
             return 0x7FC0;
@@ -19,13 +18,7 @@ inline static size_t raw_header_offset(const enum sfc_mapping mapping) {
     }
 }
 
-inline static size_t header_offset(const enum sfc_mapping mapping, const bool copier) {
+inline static size_t header_offset(const enum sfc_map mapping, const bool copier) {
     auto const offset = raw_header_offset(mapping);
     return copier ? offset + copier_size : offset;
-}
-
-inline static struct sfc_header *rom_header(const struct sfc_rom *rom) {
-    auto const offset = header_offset(rom->mapping, rom->copier);
-    assert(rom->size > offset + header_size);
-    return rom->data + offset;
 }

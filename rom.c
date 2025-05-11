@@ -19,9 +19,9 @@ static size_t file_size(FILE * const file) {
     return ftell(file);
 }
 
-bool sfc_load_rom(const char *path, const enum sfc_mapping mapping, const bool copier, struct sfc_rom *rom) {
+bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, struct sfc_rom *rom) {
     assert(path != nullptr);
-    assert(SFC_MAP_CONCRETE(mapping));
+    assert(SFC_MAP_CONCRETE(map));
     assert(rom != nullptr);
 
 
@@ -61,7 +61,7 @@ bool sfc_load_rom(const char *path, const enum sfc_mapping mapping, const bool c
     if (ferror(file))
         goto error_2;
 
-    if (size <= header_offset(mapping, copier) + header_size) {
+    if (size <= header_offset(map, copier) + sizeof(struct sfc_header)) {
         errno = EINVAL;
         goto error_2;
     }
@@ -73,13 +73,10 @@ bool sfc_load_rom(const char *path, const enum sfc_mapping mapping, const bool c
         goto error_2;
 
 
-
-
-
     const struct sfc_rom new_rom = {
         .data = data,
         .size = size,
-        .mapping = mapping,
+        .map = map,
         .copier = copier
     };
     *rom = new_rom;
