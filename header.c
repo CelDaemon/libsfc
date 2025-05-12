@@ -225,3 +225,11 @@ bool sfc_header_set_country(struct sfc_header *header, const enum sfc_country co
     header->country = country;
     return true;
 }
+
+uint8_t sfc_header_version(const struct sfc_header *header) {
+    return header->version;
+}
+
+void sfc_header_set_version(struct sfc_header *header, const uint8_t version) {
+    header->version = version;
+}

@@ -95,3 +95,6 @@ bool sfc_header_set_ram_size(struct sfc_header *header, uint16_t size);
 
 enum sfc_country sfc_header_country(const struct sfc_header *header);
 bool sfc_header_set_country(struct sfc_header *header, enum sfc_country country);
+
+uint8_t sfc_header_version(const struct sfc_header *header);
+void sfc_header_set_version(struct sfc_header *header, uint8_t version);
