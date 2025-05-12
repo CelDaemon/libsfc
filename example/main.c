@@ -19,7 +19,7 @@ int main(const size_t argc, const char *argv[]) {
     }
 
     struct sfc_rom rom;
-    err_b(sfc_load_rom(argv[1], SFC_MAP_LO, true, &rom), "Could not load rom");
+    err_b(sfc_load_rom(argv[1], SFC_MAP_LO, false, &rom), "Could not load rom");
 
     auto const header = err_p(sfc_rom_header(&rom), "Could not get rom header");
 
@@ -53,6 +53,14 @@ int main(const size_t argc, const char *argv[]) {
 
     err_b(sfc_header_set_rom_size(header, 1024), "Could not set rom size");
     printf("Index: %d, Rom size: %d\n", header->rom_size, sfc_header_rom_size(header));
+
+    printf("Index: %d, Ram size: %d\n", header->rom_size, sfc_header_ram_size(header));
+
+    err_b(sfc_header_set_ram_size(header, 1024), "Could not set ram size");
+    printf("Index: %d, Ram size: %d\n", header->rom_size, sfc_header_ram_size(header));
+
+    printf("Country: %d\n", sfc_header_country(header));
+
     sfc_unload_rom(&rom);
 }
 

@@ -42,6 +42,17 @@ struct sfc_rom {
     bool copier;
 };
 
+enum sfc_country {
+    SFC_CTY_JAPAN,
+    SFC_CTY_USA,
+    SFC_CTY_EUROPE,
+    SFC_CTY_INVALID = -1,
+    SFC_CTY__FIRST = SFC_CTY_JAPAN,
+    SFC_CTY__LAST = SFC_CTY_EUROPE
+};
+
+#define SFC_CTY_VALID(country) ((country) >= SFC_CTY__FIRST && (country) <= SFC_CTY__LAST)
+
 struct sfc_header {
     char title[max_title_length];
     uint8_t rom_mode;
@@ -78,3 +89,9 @@ bool sfc_header_set_chipset(struct sfc_header *header, enum sfc_chipset chipset)
 
 uint16_t sfc_header_rom_size(const struct sfc_header *header);
 bool sfc_header_set_rom_size(struct sfc_header *header, uint16_t size);
+
+uint16_t sfc_header_ram_size(const struct sfc_header *header);
+bool sfc_header_set_ram_size(struct sfc_header *header, uint16_t size);
+
+enum sfc_country sfc_header_country(const struct sfc_header *header);
+bool sfc_header_set_country(struct sfc_header *header, enum sfc_country country);

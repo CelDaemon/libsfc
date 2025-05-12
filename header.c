@@ -187,8 +187,41 @@ bool sfc_header_set_rom_size(struct sfc_header *header, const uint16_t size) {
         errno = EINVAL;
         return false;
     }
-    printf("Index: %d\n", index);
 
     header->rom_size = index;
+    return true;
+}
+
+uint16_t sfc_header_ram_size(const struct sfc_header *header) {
+    assert(header != nullptr);
+    assert(header->ram_size < sizeof(uint16_t) * 8);
+
+    return 1 << header->ram_size;
+}
+
+bool sfc_header_set_ram_size(struct sfc_header *header, const uint16_t size) {
+    auto const index = ffs(size) - 1;
+    if (index == -1 || 1 << index != size) {
+        errno = EINVAL;
+        return false;
+    }
+
+    header->ram_size = index;
+    return true;
+}
+
+enum sfc_country sfc_header_country(const struct sfc_header *header) {
+    auto const country = header->country;
+    if (!SFC_CTY_VALID(country))
+        return SFC_CTY_INVALID;
+    return header->country;
+}
+
+bool sfc_header_set_country(struct sfc_header *header, const enum sfc_country country) {
+    if (!SFC_CTY_VALID(country)) {
+        errno = EINVAL;
+        return false;
+    }
+    header->country = country;
     return true;
 }
