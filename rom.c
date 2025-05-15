@@ -61,7 +61,7 @@ bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, s
     if (ferror(file))
         goto error_2;
 
-    if (size <= header_offset(map, copier) + sizeof(struct sfc_header)) {
+    if (size <= data_offset(copier) + header_offset(map) + sizeof(struct sfc_header)) {
         errno = EINVAL;
         goto error_2;
     }

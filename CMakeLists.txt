@@ -10,7 +10,11 @@ add_library(sfc STATIC
         rom.c
         mapping.h
         header.c
+        checksum.c
+        mapping.c
+        verify/main.c
 )
 target_include_directories(sfc PUBLIC public/)
 target_compile_options(sfc PRIVATE -Wall -Wextra -Wpedantic)
 add_subdirectory(example)
+add_subdirectory(verify)

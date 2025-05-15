@@ -21,6 +21,8 @@ int main(const size_t argc, const char *argv[]) {
     struct sfc_rom rom;
     err_b(sfc_load_rom(argv[1], SFC_MAP_LO, true, &rom), "Could not load rom");
 
+    printf("Checksum: %.4X\n", sfc_checksum(&rom));
+
     auto const header = err_p(sfc_rom_header(&rom), "Could not get rom header");
 
     char title[max_title_length + 1];
@@ -38,7 +40,7 @@ int main(const size_t argc, const char *argv[]) {
     printf("New title: %s\n", title);
 
     sfc_header_set_speed(header, SFC_SPD_FAST);
-    err_b(sfc_header_set_map(header, SFC_MAP_EX_HI), "Failed to write map");
+    // err_b(sfc_header_set_map(header, SFC_MAP_EX_HI), "Failed to write map");
 
     printf("Speed: %s\n", sfc_header_speed(header) == SFC_SPD_FAST ? "fast" : "slow");
 
@@ -65,6 +67,10 @@ int main(const size_t argc, const char *argv[]) {
 
     sfc_header_set_version(header, 2);
     printf("Version: %d\n", sfc_header_version(header));
+
+    sfc_header_set_checksum(header, sfc_checksum(&rom));
+
+    sfc_save_rom(&rom, argv[2]);
 
     sfc_unload_rom(&rom);
 }

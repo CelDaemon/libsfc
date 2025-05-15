@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <ctype.h>
 #include <assert.h>
-#include <stdio.h>
 
 #include "sfc.h"
 #include "mapping.h"
@@ -33,7 +32,7 @@ static bool valid_title(const char *title, const size_t length) {
 
 struct sfc_header *sfc_rom_header(const struct sfc_rom *rom) {
     assert(rom != nullptr);
-    auto const offset = header_offset(rom->map, rom->copier);
+    auto const offset = data_offset(rom->copier) + header_offset(rom->map);
     assert(rom->size > offset + sizeof(struct sfc_header));
     return rom->data + offset;
 }
@@ -232,4 +231,13 @@ uint8_t sfc_header_version(const struct sfc_header *header) {
 
 void sfc_header_set_version(struct sfc_header *header, const uint8_t version) {
     header->version = version;
+}
+
+uint16_t sfc_header_checksum(const struct sfc_header *header) {
+    return header->checksum;
+}
+
+void sfc_header_set_checksum(struct sfc_header *header, const uint16_t checksum) {
+    header->checksum = checksum;
+    header->checksum_complement = ~checksum;
 }
