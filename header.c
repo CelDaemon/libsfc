@@ -32,7 +32,7 @@ static bool valid_title(const char *title, const size_t length) {
 
 struct sfc_header *sfc_rom_header(const struct sfc_rom *rom) {
     assert(rom != nullptr);
-    auto const offset = data_offset(rom->copier) + header_offset(rom->map);
+    auto const offset = sfc_data_offset(rom->copier) + sfc_header_offset(rom->map);
     assert(rom->size > offset + sizeof(struct sfc_header));
     return rom->data + offset;
 }

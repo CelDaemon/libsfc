@@ -1,6 +1,6 @@
 #include "mapping.h"
 
-size_t header_offset(const enum sfc_map mapping) {
+size_t sfc_header_offset(const enum sfc_map mapping) {
     switch (mapping) {
         case SFC_MAP_LO:
             return 0x7FC0;
@@ -13,6 +13,6 @@ size_t header_offset(const enum sfc_map mapping) {
     }
 }
 
-size_t data_offset(const bool copier) {
+size_t sfc_data_offset(const bool copier) {
     return copier ? copier_size : 0;
 }
