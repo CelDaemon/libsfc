@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <float.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -35,8 +34,10 @@ int main(const size_t argc, const char *argv[]) {
 
     if (real_sum != expected_sum) {
         printf("Mismatch!\n");
+        sfc_unload_rom(&rom);
         return 1;
     }
     printf("Match!");
+    sfc_unload_rom(&rom);
     return 0;
 }
