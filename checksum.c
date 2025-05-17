@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <strings.h>
 
 #include "mapping.h"
@@ -6,7 +7,16 @@
 
 
 static size_t log2z(const size_t x) {
-    return ffsl((long) x);
+    assert(x != 0);
+#if defined __has_builtin && __has_builtin(__builtin_clzl)
+    return sizeof(size_t) * 8 - __builtin_clzl(x) - 1;
+#else
+    size_t a = x;
+    size_t c = 0;
+    while (a >>= 1)
+        c++;
+    return c;
+#endif
 }
 static size_t pow2z(const size_t n) {
     return 1 << n;
