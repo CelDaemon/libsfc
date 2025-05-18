@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "sfc.h"
 #include "mapping.h"
@@ -175,7 +176,7 @@ bool sfc_header_set_chipset(struct sfc_header *header, const enum sfc_chipset ch
 
 uint16_t sfc_header_rom_size(const struct sfc_header *header) {
     assert(header != nullptr);
-    assert(header->rom_size < sizeof(uint16_t) * 8);
+    assert(header->rom_size < sizeof(uint16_t) * CHAR_BIT);
 
     return 1 << header->rom_size;
 }
@@ -193,7 +194,7 @@ bool sfc_header_set_rom_size(struct sfc_header *header, const uint16_t size) {
 
 uint16_t sfc_header_ram_size(const struct sfc_header *header) {
     assert(header != nullptr);
-    assert(header->ram_size < sizeof(uint16_t) * 8);
+    assert(header->ram_size < sizeof(uint16_t) * CHAR_BIT);
 
     return 1 << header->ram_size;
 }
