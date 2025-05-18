@@ -6,18 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "mapping.h"
-
-/**
- * @return The file size
- * @attention Seeks to end of file
- */
-static size_t file_size(FILE * const file) {
-    assert(file != nullptr);
-    fseek(file, 0, SEEK_END);
-    return ftell(file);
-}
 
 bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, struct sfc_rom *rom) {
     assert(path != nullptr);
@@ -29,9 +20,10 @@ bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, s
 
     if (file == nullptr)
         return false;
-
-    auto size = file_size(file);
-    rewind(file); // Rewind the file after getting its size
+    struct stat stat;
+    if (fstat(fileno(file), &stat) != 0)
+        goto error_1;
+    auto size = (size_t) stat.st_size;
 
     void *data = malloc(size); // Allocate the buffer with the predicted size
     if (data == nullptr)
