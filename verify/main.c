@@ -15,17 +15,17 @@ int main(const size_t argc, const char *argv[]) {
         fprintf(stderr, "Failed to load rom: %s", strerror(errno));
         return 2;
     }
-    auto const real_sum = sfc_checksum(&rom);
+    uint16_t const real_sum = sfc_checksum(&rom);
     printf("Real Checksum: %.4X\n", real_sum);
 
-    auto const header = sfc_rom_header(&rom);
-    if (header == nullptr) {
+    const struct sfc_header *header = sfc_rom_header(&rom);
+    if (header == NULL) {
         fprintf(stderr, "Failed to get header: %s", strerror(errno));
         return 2;
     }
-    auto const expected_sum = sfc_header_checksum(header);
+    uint16_t const expected_sum = sfc_header_checksum(header);
     printf("Expected Checksum: %.4X\n", expected_sum);
-    char title[max_title_length + 1];
+    char title[SFC_MAX_TITLE_LENGTH + 1];
     if (sfc_header_title(header, title)) {
         printf("Title: %s\n", title);
     } else {

@@ -1,8 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
-auto constexpr max_title_length = 21;
+#define SFC_MAX_TITLE_LENGTH 21
 
 enum sfc_map {
     SFC_MAP_SMART, // Unspecified, requires inferring the mapping
@@ -54,7 +55,7 @@ enum sfc_country {
 #define SFC_CTY_VALID(country) ((country) >= SFC_CTY__FIRST && (country) <= SFC_CTY__LAST)
 
 struct sfc_header {
-    char title[max_title_length];
+    char title[SFC_MAX_TITLE_LENGTH];
     uint8_t rom_mode;
     uint8_t chipset;
     uint8_t rom_size;
@@ -75,7 +76,7 @@ bool sfc_save_rom(const struct sfc_rom *rom, const char *path);
 
 struct sfc_header *sfc_rom_header(const struct sfc_rom *rom);
 
-bool sfc_header_title(const struct sfc_header *header, char title[static max_title_length + 1]);
+bool sfc_header_title(const struct sfc_header *header, char title[static SFC_MAX_TITLE_LENGTH + 1]);
 bool sfc_header_set_title(struct sfc_header *header, const char *title);
 
 enum sfc_speed sfc_header_speed(const struct sfc_header *header);

@@ -9,21 +9,21 @@
 
 #define bit_set(number, n, x) ((number & ~(1 << (n))) | ((x) << (n)))
 
-static size_t title_length(const char title[static max_title_length]) {
-    assert(title != nullptr);
+static size_t title_length(const char title[static SFC_MAX_TITLE_LENGTH]) {
+    assert(title != NULL);
     size_t length = 0;
-    for (int i = 0; i < max_title_length; i++) {
-        if (title[max_title_length - i - 1] == ' ')
+    for (int i = 0; i < SFC_MAX_TITLE_LENGTH; i++) {
+        if (title[SFC_MAX_TITLE_LENGTH - i - 1] == ' ')
             continue;
 
-        length = max_title_length - i;
+        length = SFC_MAX_TITLE_LENGTH - i;
         break;
     }
     return length;
 }
 
 static bool valid_title(const char *title, const size_t length) {
-    assert(title != nullptr);
+    assert(title != NULL);
     for (size_t i = 0; i < length; i++) {
         if (!isprint(title[i]))
             return false;
@@ -32,45 +32,44 @@ static bool valid_title(const char *title, const size_t length) {
 }
 
 struct sfc_header *sfc_rom_header(const struct sfc_rom *rom) {
-    assert(rom != nullptr);
-    auto const offset = sfc_data_offset(rom->copier) + sfc_header_offset(rom->map);
+    assert(rom != NULL);
+    size_t const offset = sfc_data_offset(rom->copier) + sfc_header_offset(rom->map);
     assert(rom->size > offset + sizeof(struct sfc_header));
-    return rom->data + offset;
+    return (struct sfc_header *) (((uint8_t *) rom->data) + offset);
 }
 
-bool sfc_header_title(const struct sfc_header *header, char title[static max_title_length + 1]) {
-    assert(header != nullptr);
-    assert(title != nullptr);
-    if (!valid_title(header->title, max_title_length)) {
+bool sfc_header_title(const struct sfc_header *header, char title[static SFC_MAX_TITLE_LENGTH + 1]) {
+    assert(header != NULL);
+    assert(title != NULL);
+    if (!valid_title(header->title, SFC_MAX_TITLE_LENGTH)) {
         errno = EINVAL;
         return false;
     }
-    memcpy(title, header->title, max_title_length);
+    memcpy(title, header->title, SFC_MAX_TITLE_LENGTH);
     title[title_length(title)] = '\0';
     return true;
 }
 
 bool sfc_header_set_title(struct sfc_header *header, const char *title) {
-    assert(header != nullptr);
-    assert(title != nullptr);
-    auto const length = strlen(title);
-    if (length > max_title_length || !valid_title(title, length)) {
+    assert(header != NULL);
+    assert(title != NULL);
+    size_t const length = strlen(title);
+    if (length > SFC_MAX_TITLE_LENGTH || !valid_title(title, length)) {
         errno = EINVAL;
         return false;
     }
     memcpy(header->title, title, length);
-    memset(header->title + length, ' ', max_title_length - length);
+    memset(header->title + length, ' ', SFC_MAX_TITLE_LENGTH - length);
     return true;
 }
 
 enum sfc_speed sfc_header_speed(const struct sfc_header *header) {
-    assert(header != nullptr);
-    auto constexpr speed_mask = 0b10000;
-    return (header->rom_mode & speed_mask) > 0 ? SFC_SPD_FAST : SFC_SPD_SLOW;
+    assert(header != NULL);
+    return (header->rom_mode & 0x10) > 0 ? SFC_SPD_FAST : SFC_SPD_SLOW;
 }
 
 bool sfc_header_set_speed(struct sfc_header *header, const enum sfc_speed speed) {
-    assert(header != nullptr);
+    assert(header != NULL);
     if (!SFC_SPD_VALID(speed)) {
         errno = EINVAL;
         return false;
@@ -80,9 +79,8 @@ bool sfc_header_set_speed(struct sfc_header *header, const enum sfc_speed speed)
 }
 
 enum sfc_map sfc_header_map(const struct sfc_header *header) {
-    assert(header != nullptr);
-    auto constexpr map_mask = 0b1111;
-    switch (header->rom_mode & map_mask) {
+    assert(header != NULL);
+    switch (header->rom_mode & 0xF) {
         case 0:
             return SFC_MAP_LO;
         case 1:
@@ -96,7 +94,7 @@ enum sfc_map sfc_header_map(const struct sfc_header *header) {
 }
 
 bool sfc_header_set_map(struct sfc_header *header, const enum sfc_map map) {
-    assert(header != nullptr);
+    assert(header != NULL);
     uint8_t value;
     switch (map) {
         case SFC_MAP_LO:
@@ -112,13 +110,13 @@ bool sfc_header_set_map(struct sfc_header *header, const enum sfc_map map) {
             errno = EINVAL;
             return false;
     }
-    header->rom_mode = (header->rom_mode & ~0b1111) | value;
+    header->rom_mode = (header->rom_mode & ~0xF) | value;
     return true;
 }
 
 enum sfc_chipset sfc_header_chipset(const struct sfc_header *header) {
-    assert(header != nullptr);
-    switch (header->chipset & 0b1111) {
+    assert(header != NULL);
+    switch (header->chipset & 0xF) {
         case 0x00:
             return 0;
         case 0x01:
@@ -139,7 +137,7 @@ enum sfc_chipset sfc_header_chipset(const struct sfc_header *header) {
     }
 }
 
-static int8_t chipset_id(const bool ram, const bool battery, const bool coprocessor) {
+static int chipset_id(const bool ram, const bool battery, const bool coprocessor) {
     if (!coprocessor && !ram && battery)
         return -1;
 
@@ -162,27 +160,27 @@ static int8_t chipset_id(const bool ram, const bool battery, const bool coproces
 }
 
 bool sfc_header_set_chipset(struct sfc_header *header, const enum sfc_chipset chipset) {
-    assert(header != nullptr);
-    auto const value = chipset_id(chipset & SFC_CHP_RAM, chipset & SFC_CHP_BATTERY, chipset & SFC_CHP_COPROCESSOR);
+    assert(header != NULL);
+    int const value = chipset_id(chipset & SFC_CHP_RAM, chipset & SFC_CHP_BATTERY, chipset & SFC_CHP_COPROCESSOR);
     if (value == -1) {
         errno = EINVAL;
         return false;
     }
 
-    header->chipset = (header->chipset & 0b1111) | value;
+    header->chipset = (header->chipset & 0xF) | value;
     return true;
 
 }
 
 uint16_t sfc_header_rom_size(const struct sfc_header *header) {
-    assert(header != nullptr);
+    assert(header != NULL);
     assert(header->rom_size < sizeof(uint16_t) * CHAR_BIT);
 
     return 1 << header->rom_size;
 }
 
 bool sfc_header_set_rom_size(struct sfc_header *header, const uint16_t size) {
-    auto const index = ffs(size) - 1;
+    int const index = ffs(size) - 1;
     if (index == -1 || 1 << index != size) {
         errno = EINVAL;
         return false;
@@ -193,14 +191,14 @@ bool sfc_header_set_rom_size(struct sfc_header *header, const uint16_t size) {
 }
 
 uint16_t sfc_header_ram_size(const struct sfc_header *header) {
-    assert(header != nullptr);
+    assert(header != NULL);
     assert(header->ram_size < sizeof(uint16_t) * CHAR_BIT);
 
     return 1 << header->ram_size;
 }
 
 bool sfc_header_set_ram_size(struct sfc_header *header, const uint16_t size) {
-    auto const index = ffs(size) - 1;
+    int const index = ffs(size) - 1;
     if (index == -1 || 1 << index != size) {
         errno = EINVAL;
         return false;
@@ -211,8 +209,7 @@ bool sfc_header_set_ram_size(struct sfc_header *header, const uint16_t size) {
 }
 
 enum sfc_country sfc_header_country(const struct sfc_header *header) {
-    auto const country = header->country;
-    if (!SFC_CTY_VALID(country))
+    if (!SFC_CTY_VALID(header->country))
         return SFC_CTY_INVALID;
     return header->country;
 }
