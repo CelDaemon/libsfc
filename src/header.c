@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <limits.h>
 
+#include "last_bit.h"
 #include "sfc.h"
 #include "mapping.h"
 
@@ -180,8 +181,12 @@ uint16_t sfc_header_rom_size(const struct sfc_header *header) {
 }
 
 bool sfc_header_set_rom_size(struct sfc_header *header, const uint16_t size) {
-    int const index = ffs(size) - 1;
-    if (index == -1 || 1 << index != size) {
+    if (size == 0) {
+        errno = EINVAL;
+        return false;
+    }
+    size_t const index = last_bit(size);
+    if (1 << index != size) {
         errno = EINVAL;
         return false;
     }
@@ -198,8 +203,12 @@ uint16_t sfc_header_ram_size(const struct sfc_header *header) {
 }
 
 bool sfc_header_set_ram_size(struct sfc_header *header, const uint16_t size) {
-    int const index = ffs(size) - 1;
-    if (index == -1 || 1 << index != size) {
+    if (size == 0) {
+        errno = EINVAL;
+        return false;
+    }
+    size_t const index = last_bit(size);
+    if (1 << index != size) {
         errno = EINVAL;
         return false;
     }
