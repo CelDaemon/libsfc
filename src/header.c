@@ -168,7 +168,7 @@ bool sfc_header_set_chipset(struct sfc_header *header, const enum sfc_chipset ch
         return false;
     }
 
-    header->chipset = (header->chipset & 0xF) | value;
+    header->chipset = (uint8_t) ((header->chipset & 0xF) | value);
     return true;
 
 }
@@ -191,7 +191,7 @@ bool sfc_header_set_rom_size(struct sfc_header *header, const uint16_t size) {
         return false;
     }
 
-    header->rom_size = index;
+    header->rom_size = (uint8_t) index;
     return true;
 }
 
@@ -213,7 +213,7 @@ bool sfc_header_set_ram_size(struct sfc_header *header, const uint16_t size) {
         return false;
     }
 
-    header->ram_size = index;
+    header->ram_size = (uint8_t) index;
     return true;
 }
 

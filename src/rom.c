@@ -10,6 +10,10 @@
 
 #include "mapping.h"
 
+#ifdef _MSC_VER
+#  define fileno _fileno
+#endif
+
 bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, struct sfc_rom *rom) {
     assert(path != NULL);
     assert(SFC_MAP_CONCRETE(map));
