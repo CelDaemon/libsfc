@@ -76,7 +76,7 @@ bool sfc_header_set_speed(sfc_header *header, const enum sfc_speed speed) {
         errno = EINVAL;
         return false;
     }
-    SFC_HDR_ROM_MODE(header) = bit_set(ROM_MODE(header), 4, speed == SFC_SPD_FAST ? 1 : 0);
+    SFC_HDR_ROM_MODE(header) = bit_set(SFC_HDR_ROM_MODE(header), 4, speed == SFC_SPD_FAST ? 1 : 0);
     return true;
 }
 
@@ -219,7 +219,7 @@ bool sfc_header_set_ram_size(sfc_header *header, const uint16_t size) {
 }
 
 enum sfc_country sfc_header_country(const sfc_header *header) {
-    if (!SFC_CTY_VALID(COUNTRY(header)))
+    if (!SFC_CTY_VALID(SFC_HDR_COUNTRY(header)))
         return SFC_CTY_INVALID;
     return SFC_HDR_COUNTRY(header);
 }
