@@ -3,7 +3,7 @@
 
 
 static size_t pow2(const size_t n) {
-    return 1 << n;
+    return ((size_t) 1) << n;
 }
 
 uint16_t sfc_checksum(const struct sfc_rom *rom) {
