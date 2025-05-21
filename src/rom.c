@@ -10,6 +10,8 @@
 
 #include "mapping.h"
 
+#include "header.h"
+
 #ifdef _MSC_VER
 #  define fileno _fileno
 #endif
@@ -56,7 +58,7 @@ bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, s
     if (ferror(file))
         goto error_2;
 
-    if (size <= sfc_data_offset(copier) + sfc_header_offset(map) + sizeof(struct sfc_header)) {
+    if (size <= sfc_data_offset(copier) + sfc_header_offset(map) + HEADER_SIZE) {
         errno = EINVAL;
         goto error_2;
     }

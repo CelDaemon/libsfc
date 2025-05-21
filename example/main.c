@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "sfc.h"
+#include "../src/header.h"
 
 
 
@@ -37,7 +38,7 @@ int main(const size_t argc, const char *argv[]) {
 
     printf("Checksum: %.4X\n", sfc_checksum(&rom));
 
-    struct sfc_header *const header = err_pointer(sfc_rom_header(&rom), "Could not get rom header");
+    sfc_header *const header = err_pointer(sfc_rom_header(&rom), "Could not get rom header");
 
     char title[SFC_MAX_TITLE_LENGTH + 1];
     err_boolean(sfc_header_title(header, title), "Could not get rom title");
@@ -65,15 +66,15 @@ int main(const size_t argc, const char *argv[]) {
 
     printf("Has coprocessor: %s, ram: %s, battery: %s\n", (chipset & SFC_CHP_COPROCESSOR) != 0 ? "yes" : "no", (chipset & SFC_CHP_RAM) != 0 ? "yes" : "no", (chipset & SFC_CHP_BATTERY) != 0 ? "yes" : "no");
 
-    printf("Index: %d, Rom size: %d\n", header->rom_size, sfc_header_rom_size(header));
+    printf("Index: %d, Rom size: %d\n", ROM_SIZE(header), sfc_header_rom_size(header));
 
     err_boolean(sfc_header_set_rom_size(header, 1024), "Could not set rom size");
-    printf("Index: %d, Rom size: %d\n", header->rom_size, sfc_header_rom_size(header));
+    printf("Index: %d, Rom size: %d\n", ROM_SIZE(header), sfc_header_rom_size(header));
 
-    printf("Index: %d, Ram size: %d\n", header->rom_size, sfc_header_ram_size(header));
+    printf("Index: %d, Ram size: %d\n", ROM_SIZE(header), sfc_header_ram_size(header));
 
     err_boolean(sfc_header_set_ram_size(header, 1024), "Could not set ram size");
-    printf("Index: %d, Ram size: %d\n", header->rom_size, sfc_header_ram_size(header));
+    printf("Index: %d, Ram size: %d\n", ROM_SIZE(header), sfc_header_ram_size(header));
 
     printf("Country: %d\n", sfc_header_country(header));
 

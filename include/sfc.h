@@ -54,18 +54,7 @@ enum sfc_country {
 
 #define SFC_CTY_VALID(country) ((country) >= SFC_CTY__FIRST && (country) <= SFC_CTY__LAST)
 
-struct sfc_header {
-    char title[SFC_MAX_TITLE_LENGTH];
-    uint8_t rom_mode;
-    uint8_t chipset;
-    uint8_t rom_size;
-    uint8_t ram_size;
-    uint8_t country;
-    uint8_t developer;
-    uint8_t version;
-    uint16_t checksum_complement;
-    uint16_t checksum;
-};
+typedef void* sfc_header;
 
 
 
@@ -74,33 +63,33 @@ bool sfc_load_rom(const char *path, enum sfc_map map, bool copier, struct sfc_ro
 void sfc_unload_rom(struct sfc_rom *rom);
 bool sfc_save_rom(const struct sfc_rom *rom, const char *path);
 
-struct sfc_header *sfc_rom_header(const struct sfc_rom *rom);
+sfc_header *sfc_rom_header(const struct sfc_rom *rom);
 
-bool sfc_header_title(const struct sfc_header *header, char title[ SFC_MAX_TITLE_LENGTH + 1]);
-bool sfc_header_set_title(struct sfc_header *header, const char *title);
+bool sfc_header_title(const sfc_header *header, char title[ SFC_MAX_TITLE_LENGTH + 1]);
+bool sfc_header_set_title(sfc_header *header, const char *title);
 
-enum sfc_speed sfc_header_speed(const struct sfc_header *header);
-bool sfc_header_set_speed(struct sfc_header *header, enum sfc_speed speed);
+enum sfc_speed sfc_header_speed(const sfc_header *header);
+bool sfc_header_set_speed(sfc_header *header, enum sfc_speed speed);
 
-enum sfc_map sfc_header_map(const struct sfc_header *header);
-bool sfc_header_set_map(struct sfc_header *header, enum sfc_map map);
+enum sfc_map sfc_header_map(const sfc_header *header);
+bool sfc_header_set_map(sfc_header *header, enum sfc_map map);
 
-enum sfc_chipset sfc_header_chipset(const struct sfc_header *header);
-bool sfc_header_set_chipset(struct sfc_header *header, enum sfc_chipset chipset);
+enum sfc_chipset sfc_header_chipset(const sfc_header *header);
+bool sfc_header_set_chipset(sfc_header *header, enum sfc_chipset chipset);
 
-uint16_t sfc_header_rom_size(const struct sfc_header *header);
-bool sfc_header_set_rom_size(struct sfc_header *header, uint16_t size);
+uint16_t sfc_header_rom_size(const sfc_header *header);
+bool sfc_header_set_rom_size(sfc_header *header, uint16_t size);
 
-uint16_t sfc_header_ram_size(const struct sfc_header *header);
-bool sfc_header_set_ram_size(struct sfc_header *header, uint16_t size);
+uint16_t sfc_header_ram_size(const sfc_header *header);
+bool sfc_header_set_ram_size(sfc_header *header, uint16_t size);
 
-enum sfc_country sfc_header_country(const struct sfc_header *header);
-bool sfc_header_set_country(struct sfc_header *header, enum sfc_country country);
+enum sfc_country sfc_header_country(const sfc_header *header);
+bool sfc_header_set_country(sfc_header *header, enum sfc_country country);
 
-uint8_t sfc_header_version(const struct sfc_header *header);
-void sfc_header_set_version(struct sfc_header *header, uint8_t version);
+uint8_t sfc_header_version(const sfc_header *header);
+void sfc_header_set_version(sfc_header *header, uint8_t version);
 
-uint16_t sfc_header_checksum(const struct sfc_header *header);
-void sfc_header_set_checksum(struct sfc_header *header, uint16_t checksum);
+uint16_t sfc_header_checksum(const sfc_header *header);
+void sfc_header_set_checksum(sfc_header *header, uint16_t checksum);
 
 uint16_t sfc_checksum(const struct sfc_rom *rom);

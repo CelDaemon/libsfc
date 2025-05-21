@@ -14,6 +14,7 @@ add_library(sfc STATIC
         src/checksum.c
         src/mapping.c
         src/last_bit.h
+        src/header.h
 )
 target_include_directories(sfc PUBLIC include/)
 if (MSVC)

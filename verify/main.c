@@ -18,7 +18,7 @@ int main(const size_t argc, const char *argv[]) {
     uint16_t const real_sum = sfc_checksum(&rom);
     printf("Real Checksum: %.4X\n", real_sum);
 
-    const struct sfc_header *header = sfc_rom_header(&rom);
+    const sfc_header *header = sfc_rom_header(&rom);
     if (header == NULL) {
         fprintf(stderr, "Failed to get header: %s", strerror(errno));
         return 2;
