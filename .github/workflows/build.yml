@@ -14,3 +14,4 @@ jobs:
         name: Generate Build Scripts
       - run: cmake --build build --config Release
         name: Build Project
+      - run: tree
