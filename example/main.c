@@ -30,6 +30,12 @@ int main(const size_t argc, const char *argv[]) {
 
     if (argc < 3) {
         fprintf(stderr, "No path provided\n");
+        const char* name = strrchr(argv[0], '/');
+        if (name != NULL)
+            name++;
+        else
+            name = argv[0];
+        fprintf(stderr, "Usage: %s [INPUT] [OUTPUT]\n", name);
         exit(1);
     }
 

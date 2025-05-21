@@ -8,6 +8,12 @@
 int main(const size_t argc, const char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No rom specified\n");
+        const char* name = strrchr(argv[0], '/');
+        if (name != NULL)
+            name++;
+        else
+            name = argv[0];
+        fprintf(stderr, "Usage: %s [FILE]\n", name);
         return 2;
     }
     struct sfc_rom rom;
