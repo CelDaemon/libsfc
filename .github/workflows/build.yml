@@ -1,0 +1,16 @@
+name: build.yml
+on:
+  push:
+
+jobs:
+  build-windows:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -B build
+        name: Generate Build Scripts
+      - run: cmake --build build
+        name: Build Project

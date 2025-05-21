@@ -10,7 +10,7 @@
 
 #define bit_set(number, n, x) ((number & ~(1 << (n))) | ((x) << (n)))
 
-static size_t title_length(const char title[static SFC_MAX_TITLE_LENGTH]) {
+static size_t title_length(const char title[ SFC_MAX_TITLE_LENGTH]) {
     assert(title != NULL);
     size_t length = 0;
     for (int i = 0; i < SFC_MAX_TITLE_LENGTH; i++) {
@@ -39,7 +39,7 @@ struct sfc_header *sfc_rom_header(const struct sfc_rom *rom) {
     return (struct sfc_header *) (((uint8_t *) rom->data) + offset);
 }
 
-bool sfc_header_title(const struct sfc_header *header, char title[static SFC_MAX_TITLE_LENGTH + 1]) {
+bool sfc_header_title(const struct sfc_header *header, char title[ SFC_MAX_TITLE_LENGTH + 1]) {
     assert(header != NULL);
     assert(title != NULL);
     if (!valid_title(header->title, SFC_MAX_TITLE_LENGTH)) {

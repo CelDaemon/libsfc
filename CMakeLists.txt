@@ -17,7 +17,7 @@ add_library(sfc STATIC
 )
 target_include_directories(sfc PUBLIC include/)
 if (MSVC)
-    target_compile_options(sfc PRIVATE /Wall)
+    target_compile_options(sfc PRIVATE /W4)
 else ()
     target_compile_options(sfc PRIVATE -Wall -Wextra -Wpedantic)
 endif ()
