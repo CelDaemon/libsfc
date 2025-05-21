@@ -7,7 +7,11 @@
 #include "../src/header.h"
 
 
-
+#if defined(_WIN32)
+#  define DIR_SEP '\\'
+#else
+#  define DIR_SEP '/'
+#endif
 
 
 static int err_sentinel(const int x, const char *msg) {
@@ -30,7 +34,7 @@ int main(const size_t argc, const char *argv[]) {
 
     if (argc < 3) {
         fprintf(stderr, "No path provided\n");
-        const char* name = strrchr(argv[0], '/');
+        const char* name = strrchr(argv[0], DIR_SEP);
         if (name != NULL)
             name++;
         else

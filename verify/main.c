@@ -5,10 +5,17 @@
 
 #include <sfc.h>
 
+#if defined(_WIN32)
+#  define DIR_SEP '\\'
+#else
+#  define DIR_SEP '/'
+#endif
+
+
 int main(const size_t argc, const char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No rom specified\n");
-        const char* name = strrchr(argv[0], '/');
+        const char* name = strrchr(argv[0], DIR_SEP);
         if (name != NULL)
             name++;
         else
