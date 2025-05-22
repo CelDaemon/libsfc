@@ -7,12 +7,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        profile: [Debug, Release]
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v4
-      - run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CI=ON
+      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCMAKE_CI=ON
         name: Generate Build Scripts
-      - run: cmake --build build --config Release
+      - run: cmake --build build --config "${{ matrix.profile }}"
         name: Build Project
       - uses: actions/upload-artifact@v4
         with:
