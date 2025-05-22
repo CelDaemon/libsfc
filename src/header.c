@@ -36,7 +36,7 @@ static bool valid_title(const char *title, const size_t length) {
 sfc_header *sfc_rom_header(const struct sfc_rom *rom) {
     assert(rom != NULL);
     size_t const offset = sfc_data_offset(rom->copier) + sfc_header_offset(rom->map);
-    assert(rom->size > offset + HEADER_SIZE);
+    assert(rom->size > offset + SFC_HDR_SIZE);
     return (sfc_header *) (((uint8_t *) rom->data) + offset);
 }
 
@@ -176,7 +176,7 @@ bool sfc_header_set_chipset(sfc_header *header, const enum sfc_chipset chipset) 
 
 uint16_t sfc_header_rom_size(const sfc_header *header) {
     assert(header != NULL);
-    assert(ROM_SIZE(header) < sizeof(uint16_t) * CHAR_BIT);
+    assert(SFC_HDR_ROM_SIZE(header) < sizeof(uint16_t) * CHAR_BIT);
 
     return 1 << SFC_HDR_ROM_SIZE(header);
 }
@@ -198,7 +198,7 @@ bool sfc_header_set_rom_size(sfc_header *header, const uint16_t size) {
 
 uint16_t sfc_header_ram_size(const sfc_header *header) {
     assert(header != NULL);
-    assert(RAM_SIZE(header) < sizeof(uint16_t) * CHAR_BIT);
+    assert(SFC_HDR_RAM_SIZE(header) < sizeof(uint16_t) * CHAR_BIT);
 
     return 1 << SFC_HDR_RAM_SIZE(header);
 }
