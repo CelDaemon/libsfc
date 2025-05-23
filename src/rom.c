@@ -1,7 +1,6 @@
 #include "sfc.h"
 
 #include <assert.h>
-#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +10,8 @@
 #include "mapping.h"
 
 #include "header.h"
+
+char *sfc_version = "BOOOO";
 
 #ifdef _MSC_VER
 #  define fileno _fileno
@@ -36,14 +37,20 @@ bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, s
         goto error_1;
 
     size_t offset = 0;
-    uint8_t chunk[2048];
+#define CHUNK_SIZE 2048
+    uint8_t chunk[CHUNK_SIZE];
     size_t chunk_size = 0;
     do {
-        chunk_size = fread(chunk, sizeof(uint8_t), 2048, file);
+        chunk_size = fread(chunk, sizeof(uint8_t), CHUNK_SIZE, file);
 
         // Resize the data buffer if exceeding the predicted size
         if (chunk_size > size - offset) {
-            size_t const new_size = offset + chunk_size;
+            if (fstat(fileno(file), &stat))
+                goto error_2;
+            size_t const min_size = offset + chunk_size;
+            size_t const file_size = stat.st_size;
+            size_t const new_size = file_size > min_size ? file_size : min_size;
+
             void *const new_data = realloc(data, new_size);
             if (new_data == NULL)
                 goto error_2;
@@ -53,7 +60,7 @@ bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, s
 
         memcpy(((uint8_t*)data) + offset, chunk, chunk_size);
         offset += chunk_size;
-    } while (chunk_size == 2048);
+    } while (chunk_size == CHUNK_SIZE);
 
     if (ferror(file))
         goto error_2;
