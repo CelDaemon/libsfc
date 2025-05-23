@@ -5,9 +5,8 @@
 #include <limits.h>
 
 #include "last_bit.h"
-#include "sfc.h"
+#include "sfc/header.h"
 #include "mapping.h"
-#include "header.h"
 
 #define bit_set(number, n, x) ((number & ~(1 << (n))) | ((x) << (n)))
 
@@ -80,7 +79,7 @@ bool sfc_header_set_speed(sfc_header *header, const enum sfc_speed speed) {
     return true;
 }
 
-enum sfc_map sfc_header_map(const sfc_header *header) {
+enum sfc_mapping sfc_header_map(const sfc_header *header) {
     assert(header != NULL);
     switch (SFC_HDR_ROM_MODE(header) & 0xF) {
         case 0:
@@ -95,7 +94,7 @@ enum sfc_map sfc_header_map(const sfc_header *header) {
     }
 }
 
-bool sfc_header_set_map(sfc_header *header, const enum sfc_map map) {
+bool sfc_header_set_map(sfc_header *header, const enum sfc_mapping map) {
     assert(header != NULL);
     uint8_t value;
     switch (map) {

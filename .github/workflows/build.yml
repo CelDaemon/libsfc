@@ -5,13 +5,14 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         profile: [debug, release]
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v4
-      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCMAKE_CI=ON
+      - run: cmake -B build -DCI_BUILD_TYPE="${{ matrix.profile }}" -DCI_BUILD=ON
         name: Generate Build Scripts
       - run: cmake --build build --config "${{ matrix.profile }}"
         name: Build Project

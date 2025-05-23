@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <sfc.h>
+#include <sfc/rom.h>
+#include <sfc/checksum.h>
+#include <sfc/header.h>
 
 #if defined(_WIN32)
 #  define DIR_SEP '\\'

@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sfc.h"
-#include "../src/header.h"
+#include <sfc/rom.h>
+#include <sfc/checksum.h>
+#include <sfc/header.h>
 
 
 #if defined(_WIN32)
@@ -99,4 +100,3 @@ int main(const size_t argc, const char *argv[]) {
 
     sfc_unload_rom(&rom);
 }
-

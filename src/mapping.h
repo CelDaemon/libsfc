@@ -1,9 +1,10 @@
 #pragma once
 
-#include "sfc.h"
-
+#include <stdbool.h>
 #include <stddef.h>
 
-size_t sfc_header_offset(enum sfc_map mapping);
+#include <sfc/rom.h>
+
+size_t sfc_header_offset(enum sfc_mapping mapping);
 
 size_t sfc_data_offset(bool copier);

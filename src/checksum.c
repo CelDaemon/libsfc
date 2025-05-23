@@ -1,6 +1,8 @@
 #include "last_bit.h"
 #include "mapping.h"
 
+#include <stdint.h>
+
 
 static size_t pow2(const size_t n) {
     return ((size_t) 1) << n;

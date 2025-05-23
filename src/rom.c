@@ -1,5 +1,3 @@
-#include "sfc.h"
-
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
@@ -7,9 +5,10 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "mapping.h"
+#include "sfc/rom.h"
+#include "sfc/header.h"
 
-#include "header.h"
+#include "mapping.h"
 
 char *sfc_version = "BOOOO";
 
@@ -17,7 +16,7 @@ char *sfc_version = "BOOOO";
 #  define fileno _fileno
 #endif
 
-bool sfc_load_rom(const char *path, const enum sfc_map map, const bool copier, struct sfc_rom *rom) {
+bool sfc_load_rom(const char *path, const enum sfc_mapping map, const bool copier, struct sfc_rom *rom) {
     assert(path != NULL);
     assert(SFC_MAP_CONCRETE(map));
     assert(rom != NULL);

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-size_t sfc_header_offset(const enum sfc_map mapping) {
+size_t sfc_header_offset(const enum sfc_mapping mapping) {
     switch (mapping) {
         case SFC_MAP_LO:
             return 0x7FC0;
