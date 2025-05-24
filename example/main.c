@@ -1,3 +1,4 @@
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,26 +9,43 @@
 #include <sfc/header.h>
 
 
-#if defined(_WIN32)
+
+#ifdef _WIN32
 #  define DIR_SEP '\\'
+#  define STRERROR strerror_s
 #else
 #  define DIR_SEP '/'
+#  define STRERROR strerror_r
 #endif
 
 
+static void print_err(const char *msg)
+{
+    int const err = errno;
+#ifndef __STDC_LIB_EXT1__
+    char err_msg[256];
+    strerror_r(err, err_msg, sizeof(err_msg));
+#else
+    size_t err_len = strerrorlen_s(err) + 1;
+    char err_msg[err_len];
+    strerror_s(err_msg, sizeof(err_msg), err);
+#endif
+    fprintf(stderr, "%s: %s\n", msg, err_msg);
+}
+
 static int err_sentinel(const int x, const char *msg) {
     if (x != -1) return x;
-    fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+    print_err(msg);
     exit(1);
 }
 static void *err_pointer(void * const x, const char *msg) {
     if (x != NULL) return x;
-    fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+    print_err(msg);
     exit(1);
 }
 static bool err_boolean(const bool x, const char *msg) {
     if (x != false) return x;
-    fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+    print_err(msg);
     exit(1);
 }
 
