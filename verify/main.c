@@ -7,12 +7,20 @@
 #include <sfc/checksum.h>
 #include <sfc/header.h>
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #  define DIR_SEP '\\'
+#  define STRERROR(err, buf, buf_len) strerror_s(buf, buf_len, err)
 #else
 #  define DIR_SEP '/'
+#  define STRERROR(err, buf, buf_len) strerror_r(err, buf, buf_len)
 #endif
 
+void print_err(const char *msg)
+{
+    char err_msg[256];
+    STRERROR(errno, err_msg, sizeof(err_msg));
+    fprintf(stderr, "%s: %s\n", msg, err_msg);
+}
 
 int main(const int argc, const char *argv[]) {
     if (argc < 2) {
@@ -27,7 +35,7 @@ int main(const int argc, const char *argv[]) {
     }
     struct sfc_rom rom;
     if (!sfc_load_rom(argv[1], SFC_MAP_HI, false, &rom)) {
-        fprintf(stderr, "Failed to load rom: %s", strerror(errno));
+        print_err("Failed to load rom");
         return 2;
     }
     uint16_t const real_sum = sfc_checksum(&rom);
@@ -35,7 +43,7 @@ int main(const int argc, const char *argv[]) {
 
     const sfc_header *header = sfc_rom_header(&rom);
     if (header == NULL) {
-        fprintf(stderr, "Failed to get header: %s", strerror(errno));
+        print_err("Failed to get header");
         return 2;
     }
     uint16_t const expected_sum = sfc_header_checksum(header);
@@ -44,7 +52,7 @@ int main(const int argc, const char *argv[]) {
     if (sfc_header_title(header, title)) {
         printf("Title: %s\n", title);
     } else {
-        fprintf(stderr, "Title Corrupt\n");
+        print_err("Title corrupt");
     }
 
     if (real_sum != expected_sum) {
@@ -52,7 +60,7 @@ int main(const int argc, const char *argv[]) {
         sfc_unload_rom(&rom);
         return 1;
     }
-    printf("Match!");
+    printf("Match!\n");
     sfc_unload_rom(&rom);
     return 0;
 }
