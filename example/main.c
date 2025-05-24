@@ -31,7 +31,7 @@ static bool err_boolean(const bool x, const char *msg) {
     exit(1);
 }
 
-int main(const size_t argc, const char *argv[]) {
+int main(const int argc, const char *argv[]) {
 
     if (argc < 3) {
         fprintf(stderr, "No path provided\n");

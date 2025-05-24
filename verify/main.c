@@ -14,7 +14,7 @@
 #endif
 
 
-int main(const size_t argc, const char *argv[]) {
+int main(const int argc, const char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No rom specified\n");
         const char* name = strrchr(argv[0], DIR_SEP);

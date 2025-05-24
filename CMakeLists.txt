@@ -5,14 +5,22 @@ option(CI_BUILD "Whether this build is part of CI" OFF)
 option(CI_BUILD_TYPE "What type of build to produce" "Debug")
 
 
-project(libsfc C)
-
-
+project(libsfc
+        VERSION 0.1.0
+        LANGUAGES C)
 
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
+
+
+if (MSVC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+else ()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
+endif ()
 
 if (CI_BUILD)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/bin>")
@@ -29,10 +37,5 @@ add_library(sfc STATIC
         src/last_bit.c src/last_bit.h
 )
 target_include_directories(sfc PUBLIC include/)
-if (MSVC)
-    target_compile_options(sfc PRIVATE /W4)
-else ()
-    target_compile_options(sfc PRIVATE -Wall -Wextra -Wpedantic)
-endif ()
 add_subdirectory(example)
 add_subdirectory(verify)
