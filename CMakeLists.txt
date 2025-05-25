@@ -17,9 +17,9 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 
 if (MSVC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+    add_compile_options(/W4)
 else ()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
+    add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
 
 if (CI_BUILD)
