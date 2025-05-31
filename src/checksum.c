@@ -14,7 +14,7 @@ uint16_t sfc_checksum(const struct sfc_rom *rom) {
     size_t const size = rom->size - offset;
     const uint8_t * data = ((uint8_t*)rom->data) + offset;
 
-    size_t const main_size = pow2(last_bit(size));
+    size_t const main_size = pow2(sfc_last_bit(size));
     size_t const remainder_size = size - main_size;
 
     uint16_t main_accumulator = 0;

@@ -185,7 +185,7 @@ bool sfc_header_set_rom_size(sfc_header *header, const uint16_t size) {
         errno = EINVAL;
         return false;
     }
-    size_t const index = last_bit(size);
+    size_t const index = sfc_last_bit(size);
     if (1 << index != size) {
         errno = EINVAL;
         return false;
@@ -207,7 +207,7 @@ bool sfc_header_set_ram_size(sfc_header *header, const uint16_t size) {
         errno = EINVAL;
         return false;
     }
-    size_t const index = last_bit(size);
+    size_t const index = sfc_last_bit(size);
     if (1 << index != size) {
         errno = EINVAL;
         return false;

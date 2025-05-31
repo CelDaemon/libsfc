@@ -1,4 +1,4 @@
 #pragma once
 #include <stddef.h>
 
-size_t last_bit(size_t x);
+size_t sfc_last_bit(size_t x);

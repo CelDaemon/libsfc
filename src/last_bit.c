@@ -11,7 +11,7 @@
 #  define HAS_BUILTIN(x) 0
 #endif
 
-size_t last_bit(const size_t x) {
+size_t sfc_last_bit(const size_t x) {
     assert(x != 0);
 
 

@@ -20,6 +20,8 @@
 #endif
 
 
+size_t sfc_last_bit(size_t x);
+
 static void print_err(const char *msg)
 {
     char err_msg[256];
@@ -44,7 +46,6 @@ static bool err_boolean(const bool x, const char *msg) {
 }
 
 int main(const int argc, const char *argv[]) {
-
     if (argc < 3) {
         fprintf(stderr, "No path provided\n");
         const char* name = strrchr(argv[0], DIR_SEP);
