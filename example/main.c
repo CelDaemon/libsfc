@@ -13,10 +13,8 @@
 
 #ifdef _WIN32
 #  define DIR_SEP '\\'
-#  define STRERROR(err, buf, buf_len) strerror_s(buf, buf_len, err)
 #else
 #  define DIR_SEP '/'
-#  define STRERROR(err, buf, buf_len) strerror_r(err, buf, buf_len)
 #endif
 
 int main(const int argc, const char *argv[]) {
