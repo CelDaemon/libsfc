@@ -15,13 +15,6 @@
 #  define STRERROR(err, buf, buf_len) strerror_r(err, buf, buf_len)
 #endif
 
-void print_err(const char *msg)
-{
-    char err_msg[256];
-    STRERROR(errno, err_msg, sizeof(err_msg));
-    fprintf(stderr, "%s: %s\n", msg, err_msg);
-}
-
 int main(const int argc, const char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No rom specified\n");
@@ -33,9 +26,16 @@ int main(const int argc, const char *argv[]) {
         fprintf(stderr, "Usage: %s [FILE]\n", name);
         return 2;
     }
+    size_t size;
+    void *const rom_data = sfc_load_file(argv[1], &size);
+    if (rom_data == NULL)
+    {
+        perror("Failed to load rom file");
+        return 2;
+    }
     struct sfc_rom rom;
-    if (!sfc_load_rom(argv[1], SFC_MAP_HI, false, &rom)) {
-        print_err("Failed to load rom");
+    if (!sfc_load_rom(rom_data, size, SFC_MAP_HI, SFC_CPY_SMART, &rom)) {
+        perror("Failed to load rom");
         return 2;
     }
     uint16_t const real_sum = sfc_checksum(&rom);
@@ -43,7 +43,7 @@ int main(const int argc, const char *argv[]) {
 
     const sfc_header *header = sfc_rom_header(&rom);
     if (header == NULL) {
-        print_err("Failed to get header");
+        perror("Failed to get header");
         return 2;
     }
     uint16_t const expected_sum = sfc_header_checksum(header);
@@ -52,7 +52,7 @@ int main(const int argc, const char *argv[]) {
     if (sfc_header_title(header, title)) {
         printf("Title: %s\n", title);
     } else {
-        print_err("Title corrupt");
+        perror("Title corrupt");
     }
 
     if (real_sum != expected_sum) {

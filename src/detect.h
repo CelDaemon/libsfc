@@ -1,6 +1,5 @@
 #pragma once
 #include <stddef.h>
+#include <stdbool.h>
 
-#include "sfc/rom.h"
-
-enum sfc_copier sfc_detect_copier(size_t size);
+bool sfc_detect_copier(size_t size);
