@@ -35,6 +35,7 @@ add_library(sfc STATIC
         src/mapping.c src/mapping.h
         src/header.c include/sfc/header.h
         src/last_bit.c src/last_bit.h
+        src/detect.c src/detect.h
 )
 target_include_directories(sfc PUBLIC include/)
 add_subdirectory(example)

@@ -1,6 +1,15 @@
 #pragma once
 #include <stdbool.h>
 
+enum sfc_copier
+{
+    SFC_CPY_SMART,
+    SFC_CPY_FALSE,
+    SFC_CPY_TRUE
+};
+
+#define SFC_CPY_CONCRETE(copier) ((copier) == SFC_CPY_FALSE || (copier) == SFC_CPY_TRUE)
+
 enum sfc_mapping {
     SFC_MAP_SMART, // Unspecified, requires inferring the mapping
     SFC_MAP_LO,
@@ -22,6 +31,7 @@ struct sfc_rom {
     bool copier;
 };
 
-bool sfc_load_rom(const char *path, enum sfc_mapping map, bool copier, struct sfc_rom *rom);
+void *sfc_load_file(const char *path, size_t *size);
+bool sfc_load_rom(void *data, size_t size, enum sfc_mapping map, enum sfc_copier copier, struct sfc_rom *rom);
 void sfc_unload_rom(struct sfc_rom *rom);
 bool sfc_save_rom(const struct sfc_rom *rom, const char *path);

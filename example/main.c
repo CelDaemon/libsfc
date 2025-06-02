@@ -19,32 +19,6 @@
 #  define STRERROR(err, buf, buf_len) strerror_r(err, buf, buf_len)
 #endif
 
-
-size_t sfc_last_bit(size_t x);
-
-static void print_err(const char *msg)
-{
-    char err_msg[256];
-    STRERROR(errno, err_msg, sizeof(err_msg));
-    fprintf(stderr, "%s: %s\n", msg, err_msg);
-}
-
-static int err_sentinel(const int x, const char *msg) {
-    if (x != -1) return x;
-    print_err(msg);
-    exit(1);
-}
-static void *err_pointer(void * const x, const char *msg) {
-    if (x != NULL) return x;
-    print_err(msg);
-    exit(1);
-}
-static bool err_boolean(const bool x, const char *msg) {
-    if (x != false) return x;
-    print_err(msg);
-    exit(1);
-}
-
 int main(const int argc, const char *argv[]) {
     if (argc < 3) {
         fprintf(stderr, "No path provided\n");
@@ -56,25 +30,46 @@ int main(const int argc, const char *argv[]) {
         fprintf(stderr, "Usage: %s [INPUT] [OUTPUT]\n", name);
         exit(1);
     }
-
+    size_t rom_size;
+    void *rom_data = sfc_load_file(argv[1], &rom_size);
+    if (rom_data == NULL)
+    {
+        perror("Could not load rom file");
+        return 1;
+    }
     struct sfc_rom rom;
-    err_boolean(sfc_load_rom(argv[1], SFC_MAP_LO, true, &rom), "Could not load rom");
+    if (!sfc_load_rom(rom_data, rom_size, SFC_MAP_LO, SFC_CPY_SMART, &rom))
+    {
+        perror("Could not load rom");
+        free(rom_data);
+        return 1;
+    }
 
     printf("Checksum: %.4X\n", sfc_checksum(&rom));
 
-    sfc_header *const header = err_pointer(sfc_rom_header(&rom), "Could not get rom header");
+    sfc_header *const header = sfc_rom_header(&rom);
 
     char title[SFC_MAX_TITLE_LENGTH + 1];
-    err_boolean(sfc_header_title(header, title), "Could not get rom title");
+    if (!sfc_header_title(header, title))
+    {
+        perror("Could not get rom title");
+        goto error;
+    }
 
     printf("Current title: %s\n", title);
 
     const char new_title[] = "Test World";
     printf("Setting to: %s\n", new_title);
-
-    err_boolean(sfc_header_set_title(header, new_title), "Could not set rom title");
-
-    err_boolean(sfc_header_title(header, title), "Could not get rom title");
+    if (!sfc_header_set_title(header, new_title))
+    {
+        perror("Could not set rom title");
+        goto error;
+    }
+    if (!sfc_header_title(header, title))
+    {
+        perror("Could not get rom title");
+        goto error;
+    }
 
     printf("New title: %s\n", title);
 
@@ -83,21 +78,40 @@ int main(const int argc, const char *argv[]) {
 
     printf("Speed: %s\n", sfc_header_speed(header) == SFC_SPD_FAST ? "fast" : "slow");
 
-    err_boolean(sfc_save_rom(&rom, argv[2]), "Could not save rom");
-
-    err_boolean(sfc_header_set_chipset(header, SFC_CHP_RAM | SFC_CHP_BATTERY), "Could not set chipset");
-    enum sfc_chipset const chipset = err_sentinel(sfc_header_chipset(header), "Failed to get chipset");
+    if (!sfc_save_rom(&rom, argv[2]))
+    {
+        perror("Could not save rom");
+        goto error;
+    }
+    if (!sfc_header_set_chipset(header, SFC_CHP_RAM | SFC_CHP_BATTERY))
+    {
+        perror("Could not set chipset");
+        goto error;
+    }
+    enum sfc_chipset const chipset = sfc_header_chipset(header);
+    if (chipset == -1)
+    {
+        perror("Failed to get chipset");
+        goto error;
+    }
 
     printf("Has coprocessor: %s, ram: %s, battery: %s\n", (chipset & SFC_CHP_COPROCESSOR) != 0 ? "yes" : "no", (chipset & SFC_CHP_RAM) != 0 ? "yes" : "no", (chipset & SFC_CHP_BATTERY) != 0 ? "yes" : "no");
 
     printf("Index: %d, Rom size: %d\n", SFC_HDR_ROM_SIZE(header), sfc_header_rom_size(header));
+    if (!sfc_header_set_rom_size(header, 1024))
+    {
+        perror("Could not set rom size");
+        goto error;
+    }
 
-    err_boolean(sfc_header_set_rom_size(header, 1024), "Could not set rom size");
     printf("Index: %d, Rom size: %d\n", SFC_HDR_ROM_SIZE(header), sfc_header_rom_size(header));
 
     printf("Index: %d, Ram size: %d\n", SFC_HDR_ROM_SIZE(header), sfc_header_ram_size(header));
-
-    err_boolean(sfc_header_set_ram_size(header, 1024), "Could not set ram size");
+    if (!sfc_header_set_ram_size(header, 1024))
+    {
+        perror("Could not set ram size");
+        goto error;
+    }
     printf("Index: %d, Ram size: %d\n", SFC_HDR_ROM_SIZE(header), sfc_header_ram_size(header));
 
     printf("Country: %d\n", sfc_header_country(header));
@@ -109,7 +123,16 @@ int main(const int argc, const char *argv[]) {
 
     sfc_header_set_checksum(header, sfc_checksum(&rom));
 
-    sfc_save_rom(&rom, argv[2]);
+    if (!sfc_save_rom(&rom, argv[2]))
+    {
+        perror("Could not save rom");
+        goto error;
+    };
 
     sfc_unload_rom(&rom);
+    return 0;
+
+error:
+    sfc_unload_rom(&rom);
+    return 1;
 }
