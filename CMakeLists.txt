@@ -12,7 +12,7 @@ project(libsfc
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 
 
@@ -22,11 +22,10 @@ else ()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
 
-if (CI_BUILD)
+if (CI_OUTPUT)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/bin>")
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/lib>")
-    set(CMAKE_BUILD_TYPE "${CI_BUILD_TYPE}")
-    set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/lib>")
 endif ()
 
 add_library(sfc STATIC

@@ -12,7 +12,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v4
-      - run: cmake -B build -DCI_BUILD_TYPE="${{ matrix.profile }}" -DCI_BUILD=ON
+      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCI_OUTPUT=ON -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
         name: Generate Build Scripts
       - run: cmake --build build --config "${{ matrix.profile }}"
         name: Build Project
