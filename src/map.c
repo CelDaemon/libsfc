@@ -1,5 +1,6 @@
 #include "map.h"
 
+#include <assert.h>
 #include <stdlib.h>
 
 #include "header.h"
@@ -38,5 +39,7 @@ sfc_bool sfc_header_available(const enum sfc_map map, const size_t size)
 
 enum sfc_map sfc_introspect_map(const void *data, const size_t size)
 {
+    (void)data;
+    (void)size;
     return SFC_MAP_LO;
 }

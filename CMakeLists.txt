@@ -32,7 +32,6 @@ add_library(sfc STATIC
         include/sfc.h
         src/map.h
         src/map.c
-        src/header.c
         src/header.h
 )
 target_include_directories(sfc PUBLIC include/)

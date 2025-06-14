@@ -13,6 +13,8 @@ struct sfc_rom *sfc_create_rom(const void * const data, const size_t size, const
     if (!sfc_header_available(final_map, memory_size))
         return NULL;
 
+    return NULL;
+
 
 
 
