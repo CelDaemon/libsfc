@@ -12,13 +12,12 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v4
-      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCI_OUTPUT=ON -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
         name: Generate Build Scripts
       - run: cmake --build build --config "${{ matrix.profile }}"
         name: Build Project
+      - run: cmake --install build --prefix output
       - uses: actions/upload-artifact@v4
         with:
           name: 'binaries-${{ matrix.os }}-${{ matrix.profile }}'
-          path: |
-            build/bin
-            build/lib
+          path: output

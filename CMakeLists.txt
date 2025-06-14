@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.31)
 
 
-option(CI_BUILD "Whether this build is part of CI" OFF)
-option(CI_BUILD_TYPE "What type of build to produce" "Debug")
+option(CI_OUTPUT "Whether this build is part of CI" OFF)
 
 
 project(libsfc
@@ -10,7 +9,7 @@ project(libsfc
         LANGUAGES C)
 
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
@@ -29,13 +28,15 @@ if (CI_OUTPUT)
 endif ()
 
 add_library(sfc STATIC
-        src/rom.c include/sfc/rom.h
-        src/checksum.c include/sfc/checksum.h
-        src/mapping.c src/mapping.h
-        src/header.c include/sfc/header.h
-        src/last_bit.c src/last_bit.h
-        src/detect.c src/detect.h
+        src/sfc.c
+        include/sfc.h
+        src/map.h
+        src/map.c
+        src/header.c
+        src/header.h
 )
 target_include_directories(sfc PUBLIC include/)
 add_subdirectory(example)
 add_subdirectory(verify)
+
+install(TARGETS sfc example verify)
