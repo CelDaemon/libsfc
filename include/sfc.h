@@ -20,5 +20,6 @@ struct sfc_rom
 };
 
 struct sfc_rom *sfc_create_rom(const void *data, size_t size, const sfc_bool *copier, const enum sfc_map *map);
+void sfc_destroy_rom(struct sfc_rom *rom);
 
 #endif
