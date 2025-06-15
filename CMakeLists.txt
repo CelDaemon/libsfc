@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.31)
 
 
-option(CI_OUTPUT "Whether this build is part of CI" OFF)
 
 
 project(libsfc
@@ -21,11 +20,6 @@ else ()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
 
-if (CI_OUTPUT)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/bin>")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/lib>")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "$<1:${CMAKE_BINARY_DIR}/lib>")
-endif ()
 
 add_library(sfc STATIC
         src/sfc.c
