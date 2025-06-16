@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6,9 +7,10 @@
 
 struct sfc_rom *sfc_create_rom(const void * const data, size_t const size, const bool * const copier, const enum sfc_map * const map)
 {
+    assert(data != NULL);
     bool const final_copier = copier != NULL ? *copier : sfc_introspect_copier(size);
     size_t const memory_size = size - (final_copier ? SFC_COPIER_SIZE : 0);
-    const void * const memory_data = ((char*)data) + (final_copier ? SFC_COPIER_SIZE : 0);
+    void const * const memory_data = ((char*)data) + (final_copier ? SFC_COPIER_SIZE : 0);
     enum sfc_map const final_map = map != NULL ? *map : sfc_introspect_map(memory_data, memory_size);
 
     if (!sfc_header_available(final_map, memory_size))
@@ -36,6 +38,8 @@ error_free_data:
 
 void sfc_destroy_rom(struct sfc_rom * const rom)
 {
+    if (rom == NULL)
+        return;
     free(rom->data);
     rom->data = NULL;
     free(rom);
