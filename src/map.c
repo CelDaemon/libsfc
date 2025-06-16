@@ -26,12 +26,12 @@ size_t sfc_header_offset(const enum sfc_map map)
     }
 }
 
-sfc_bool sfc_introspect_copier(const size_t size)
+bool sfc_introspect_copier(const size_t size)
 {
     return (size & 512) > 0;
 }
 
-sfc_bool sfc_header_available(const enum sfc_map map, const size_t size)
+bool sfc_header_available(const enum sfc_map map, const size_t size)
 {
     const size_t offset = sfc_header_offset(map);
     return offset + SFC_HEADER_SIZE < size;

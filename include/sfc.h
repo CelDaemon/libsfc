@@ -1,9 +1,7 @@
 #ifndef _SFC_H
 #define _SFC_H
 
-typedef int sfc_bool;
-#define SFC_TRUE 1
-#define SFC_FALSE 0
+#include <stdbool.h>
 
 enum sfc_map
 {
@@ -19,7 +17,7 @@ struct sfc_rom
     size_t size;
 };
 
-struct sfc_rom *sfc_create_rom(const void *data, size_t size, const sfc_bool *copier, const enum sfc_map *map);
+struct sfc_rom *sfc_create_rom(const void *data, size_t size, const bool *copier, const enum sfc_map *map);
 void sfc_destroy_rom(struct sfc_rom *rom);
 
 #endif
