@@ -1,6 +1,5 @@
 #include "map.h"
 
-#include <assert.h>
 #include <stdlib.h>
 
 #include "header.h"
@@ -11,7 +10,7 @@
  * @param map ROM memory map
  * @return The ROM header offset in memory
  */
-size_t sfc_header_offset(const enum sfc_map map)
+size_t sfc_header_offset(enum sfc_map const map)
 {
     switch (map)
     {
@@ -26,18 +25,18 @@ size_t sfc_header_offset(const enum sfc_map map)
     }
 }
 
-bool sfc_introspect_copier(const size_t size)
+bool sfc_introspect_copier(size_t const size)
 {
     return (size & 512) > 0;
 }
 
-bool sfc_header_available(const enum sfc_map map, const size_t size)
+bool sfc_header_available(enum sfc_map const map, size_t const size)
 {
     const size_t offset = sfc_header_offset(map);
     return offset + SFC_HEADER_SIZE < size;
 }
 
-enum sfc_map sfc_introspect_map(const void *data, const size_t size)
+enum sfc_map sfc_introspect_map(void const * const data, size_t const size)
 {
     (void)data;
     (void)size;

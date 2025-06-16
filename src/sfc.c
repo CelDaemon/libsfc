@@ -4,7 +4,7 @@
 #include "map.h"
 
 
-struct sfc_rom *sfc_create_rom(const void * const data, const size_t size, const bool * const copier, const enum sfc_map * const map)
+struct sfc_rom *sfc_create_rom(const void * const data, size_t const size, const bool * const copier, const enum sfc_map * const map)
 {
     bool const final_copier = copier != NULL ? *copier : sfc_introspect_copier(size);
     size_t const memory_size = size - (final_copier ? SFC_COPIER_SIZE : 0);
@@ -34,7 +34,7 @@ error_free_data:
     return NULL;
 }
 
-void sfc_destroy_rom(struct sfc_rom * rom)
+void sfc_destroy_rom(struct sfc_rom * const rom)
 {
     free(rom->data);
     rom->data = NULL;

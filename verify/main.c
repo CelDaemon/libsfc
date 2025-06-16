@@ -3,7 +3,7 @@
 
 #include "sfc.h"
 
-int main(int const argc, const char * const argv[])
+int main(int const argc, char const * const argv[])
 {
     if (argc < 2)
         return 1;
