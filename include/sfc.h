@@ -33,7 +33,7 @@ struct sfc_rom *sfc_create_rom(void const *input_data, size_t size, bool const *
 void sfc_destroy_rom(struct sfc_rom *rom);
 sfc_header sfc_rom_header(struct sfc_rom const * rom);
 
-char *sfc_header_title(sfc_header header, char title[const SFC_HEADER_TITLE_MAX_SIZE + 1]);
+char *sfc_header_title(sfc_header header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
 void sfc_header_set_title(sfc_header header, char title[]);
 
 enum sfc_speed sfc_header_speed(sfc_header header);

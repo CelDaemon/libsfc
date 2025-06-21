@@ -4,6 +4,10 @@
 
 #include <sfc.h>
 
+#ifdef _MSC_VER
+#define fileno _fileno
+#endif
+
 int main(int const argc, char const * const argv[])
 {
     if (argc < 2)

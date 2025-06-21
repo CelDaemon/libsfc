@@ -17,7 +17,7 @@
 #define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
 #define SFC_HEADER_ROM_MODE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_MODE_OFFSET))
 
-static size_t find_title_size(char const title[const SFC_HEADER_TITLE_MAX_SIZE + 1])
+static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     for (size_t i = 0; i < SFC_HEADER_TITLE_MAX_SIZE; i++)
     {
@@ -27,7 +27,7 @@ static size_t find_title_size(char const title[const SFC_HEADER_TITLE_MAX_SIZE +
     return 0;
 }
 
-char *sfc_header_title(sfc_header const header, char title[const SFC_HEADER_TITLE_MAX_SIZE + 1])
+char *sfc_header_title(sfc_header const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     assert(header != NULL);
     assert(title != NULL);
