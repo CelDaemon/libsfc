@@ -105,7 +105,11 @@ void sfc_header_set_map(sfc_header const header, enum sfc_map const map)
 
 struct sfc_chipset sfc_header_chipset(sfc_header const header)
 {
-    struct sfc_chipset output = {};
+    struct sfc_chipset output = {
+        false,
+        false,
+        false
+    };
     switch (SFC_HEADER_CHIPSET(header) & 0xF)
     {
     case 0:
@@ -140,14 +144,14 @@ struct sfc_chipset sfc_header_chipset(sfc_header const header)
 }
 
 
-static uint_least8_t chipset_id(struct sfc_chipset const chipset)
+static int_least8_t chipset_id(struct sfc_chipset const chipset)
 {
     if (!chipset.coprocessor)
     {
         if (!chipset.ram)
         {
             if (chipset.battery)
-                abort();
+                return -1;
             return 0;
         }
         if (!chipset.battery)
@@ -165,12 +169,14 @@ static uint_least8_t chipset_id(struct sfc_chipset const chipset)
     return 6;
 }
 
-void sfc_header_set_chipset(sfc_header const header, struct sfc_chipset const chipset)
+bool sfc_header_set_chipset(sfc_header const header, struct sfc_chipset const chipset)
 {
-
+    int_least8_t const new_id = chipset_id(chipset);
+    if (new_id == -1)
+        return false;
     uint_least8_t id = SFC_HEADER_CHIPSET(header);
     id &= ~0xF;
-    id |= chipset_id(chipset);
+    id |= (new_id & 0xF);
     SFC_HEADER_CHIPSET(header) = id;
-
+    return true;
 }

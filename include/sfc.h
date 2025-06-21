@@ -50,6 +50,6 @@ enum sfc_map sfc_header_map(sfc_header header);
 void sfc_header_set_map(sfc_header header, enum sfc_map map);
 
 struct sfc_chipset sfc_header_chipset(sfc_header header);
-void sfc_header_set_chipset(sfc_header header, struct sfc_chipset chipset);
+bool sfc_header_set_chipset(sfc_header header, struct sfc_chipset chipset);
 
 #endif

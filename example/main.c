@@ -45,11 +45,16 @@ int main(int const argc, char const * const argv[])
     sfc_header_set_map(header, SFC_MAP_EX_HI);
     printf("ROM Map: %d\n", sfc_header_map(header));
     struct sfc_chipset const new_chipset = {
-        false,
+        true,
         true,
         false
     };
-    sfc_header_set_chipset(header, new_chipset);
+    if (!sfc_header_set_chipset(header, new_chipset))
+    {
+        fprintf(stderr, "Failed to set chipset\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    }
     struct sfc_chipset const chipset = sfc_header_chipset(header);
     printf("SRAM: %d, battery: %d, coprocessor: %d\n", chipset.ram, chipset.battery, chipset.coprocessor);
     sfc_destroy_rom(rom);
