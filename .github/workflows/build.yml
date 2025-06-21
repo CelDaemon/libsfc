@@ -19,5 +19,5 @@ jobs:
       - run: cmake --install build --prefix output --config "${{ matrix.profile }}"
       - uses: actions/upload-artifact@v4
         with:
-          name: 'binaries-${{ matrix.os }}-${{ matrix.profile }}'
+          name: 'output-${{ matrix.os }}-${{ matrix.profile }}'
           path: output
