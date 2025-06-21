@@ -13,9 +13,11 @@
 
 #define SFC_HEADER_TITLE_OFFSET 0xC0
 #define SFC_HEADER_ROM_MODE_OFFSET 0xD5
+#define SFC_HEADER_CHIPSET_OFFSET 0xD6
 
 #define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
 #define SFC_HEADER_ROM_MODE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_MODE_OFFSET))
+#define SFC_HEADER_CHIPSET(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_CHIPSET_OFFSET))
 
 static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
@@ -99,4 +101,76 @@ void sfc_header_set_map(sfc_header const header, enum sfc_map const map)
         abort();
     }
     SFC_HEADER_ROM_MODE(header) = mode;
+}
+
+struct sfc_chipset sfc_header_chipset(sfc_header const header)
+{
+    struct sfc_chipset output = {};
+    switch (SFC_HEADER_CHIPSET(header) & 0xF)
+    {
+    case 0:
+        break;
+    case 1:
+        output.ram = true;
+        break;
+    case 2:
+        output.ram = true;
+        output.battery = true;
+        break;
+    case 3:
+        output.coprocessor = true;
+        break;
+    case 4:
+        output.ram = true;
+        output.coprocessor = true;
+        break;
+    case 5:
+        output.ram = true;
+        output.battery = true;
+        output.coprocessor = true;
+        break;
+    case 6:
+        output.battery = true;
+        output.coprocessor = true;
+        break;
+    default:
+        abort();
+    }
+    return output;
+}
+
+
+static uint_least8_t chipset_id(struct sfc_chipset const chipset)
+{
+    if (!chipset.coprocessor)
+    {
+        if (!chipset.ram)
+        {
+            if (chipset.battery)
+                abort();
+            return 0;
+        }
+        if (!chipset.battery)
+            return 1;
+        return 2;
+    }
+    if (chipset.ram)
+    {
+        if (!chipset.battery)
+            return 4;
+        return 5;
+    }
+    if (!chipset.battery)
+        return 3;
+    return 6;
+}
+
+void sfc_header_set_chipset(sfc_header const header, struct sfc_chipset const chipset)
+{
+
+    uint_least8_t id = SFC_HEADER_CHIPSET(header);
+    id &= ~0xF;
+    id |= chipset_id(chipset);
+    SFC_HEADER_CHIPSET(header) = id;
+
 }

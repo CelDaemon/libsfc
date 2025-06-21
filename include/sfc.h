@@ -19,6 +19,13 @@ enum sfc_speed
     SFC_FAST
 };
 
+struct sfc_chipset
+{
+    bool ram:1;
+    bool battery:1;
+    bool coprocessor:1;
+};
+
 typedef void *sfc_header;
 
 struct sfc_rom
@@ -41,5 +48,8 @@ void sfc_header_set_speed(sfc_header header, enum sfc_speed speed);
 
 enum sfc_map sfc_header_map(sfc_header header);
 void sfc_header_set_map(sfc_header header, enum sfc_map map);
+
+struct sfc_chipset sfc_header_chipset(sfc_header header);
+void sfc_header_set_chipset(sfc_header header, struct sfc_chipset chipset);
 
 #endif
