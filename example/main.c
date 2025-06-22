@@ -67,25 +67,25 @@ int main(int const argc, char const * const argv[])
         return 1;
     }
     printf("ROM Map: %d\n", map);
-    struct sfc_chipset const new_chipset = {
+    struct sfc_cartridge_type const new_cartridge_type = {
         true,
         true,
         false
     };
-    if (!sfc_header_set_chipset(header, new_chipset))
+    if (!sfc_header_set_cartridge_type(header, new_cartridge_type))
     {
         fprintf(stderr, "Failed to set chipset\n");
         sfc_destroy_rom(rom);
         return 1;
     }
-    struct sfc_chipset chipset;
-    if (!sfc_header_chipset(header, &chipset))
+    struct sfc_cartridge_type cartridge_type;
+    if (!sfc_header_cartridge_type(header, &cartridge_type))
     {
         fprintf(stderr, "Failed to get chipset\n");
         sfc_destroy_rom(rom);
         return 1;
     }
-    printf("SRAM: %d, battery: %d, coprocessor: %d\n", chipset.ram, chipset.battery, chipset.coprocessor);
+    printf("SRAM: %d, battery: %d, coprocessor: %d\n", cartridge_type.ram, cartridge_type.battery, cartridge_type.coprocessor);
     if (!sfc_header_set_rom_size(header, 2048))
     {
         fprintf(stderr, "Failed to set ROM size\n");

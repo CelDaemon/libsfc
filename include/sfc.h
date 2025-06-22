@@ -26,11 +26,18 @@ enum sfc_speed
     SFC_FAST
 };
 
-struct sfc_chipset
+struct sfc_cartridge_type
 {
     bool ram:1;
     bool battery:1;
     bool coprocessor:1;
+};
+
+enum sfc_destination_code
+{
+    SFC_DESTINATION_NTSC,
+    SFC_DESTINATION_PAL,
+    SFC_DESTINATION_JPN
 };
 
 typedef void *sfc_header;
@@ -56,8 +63,8 @@ void sfc_header_set_speed(sfc_header header, enum sfc_speed speed);
 bool sfc_header_map(sfc_header header, enum sfc_map * map);
 bool sfc_header_set_map(sfc_header header, enum sfc_map map);
 
-bool sfc_header_chipset(sfc_header header, struct sfc_chipset * chipset);
-bool sfc_header_set_chipset(sfc_header header, struct sfc_chipset chipset);
+bool sfc_header_cartridge_type(sfc_header header, struct sfc_cartridge_type * cartridge_type);
+bool sfc_header_set_cartridge_type(sfc_header header, struct sfc_cartridge_type cartridge_type);
 
 uint_least32_t sfc_header_rom_size(sfc_header header);
 bool sfc_header_set_rom_size(sfc_header header, uint_least32_t size);

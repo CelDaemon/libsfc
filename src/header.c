@@ -14,14 +14,14 @@
 #include "find_last_set.h"
 
 #define SFC_HEADER_TITLE_OFFSET 0xC0
-#define SFC_HEADER_ROM_MODE_OFFSET 0xD5
-#define SFC_HEADER_CHIPSET_OFFSET 0xD6
+#define SFC_HEADER_MAP_MODE_OFFSET 0xD5
+#define SFC_HEADER_CARTRIDGE_TYPE_OFFSET 0xD6
 #define SFC_HEADER_ROM_SIZE_OFFSET 0xD7
 #define SFC_HEADER_RAM_SIZE_OFFSET 0xD8
 
 #define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
-#define SFC_HEADER_ROM_MODE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_MODE_OFFSET))
-#define SFC_HEADER_CHIPSET(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_CHIPSET_OFFSET))
+#define SFC_HEADER_MAP_MODE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_MAP_MODE_OFFSET))
+#define SFC_HEADER_CARTRIDGE_TYPE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_CARTRIDGE_TYPE_OFFSET))
 #define SFC_HEADER_ROM_SIZE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_SIZE_OFFSET))
 #define SFC_HEADER_RAM_SIZE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_RAM_SIZE_OFFSET))
 
@@ -65,23 +65,23 @@ bool sfc_header_set_title(sfc_header const header, char title[])
 enum sfc_speed sfc_header_speed(sfc_header const header)
 {
     assert(header != NULL);
-    return (SFC_HEADER_ROM_MODE(header) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
+    return (SFC_HEADER_MAP_MODE(header) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
 }
 
 void sfc_header_set_speed(sfc_header const header, enum sfc_speed const speed)
 {
     assert(header != NULL);
     uint_least8_t const value = speed == SFC_FAST ? 1 : 0;
-    uint_least8_t mode = SFC_HEADER_ROM_MODE(header);
+    uint_least8_t mode = SFC_HEADER_MAP_MODE(header);
     mode &= ~0x10;
     mode |= value << 4;
-    SFC_HEADER_ROM_MODE(header) = mode;
+    SFC_HEADER_MAP_MODE(header) = mode;
 }
 
 bool sfc_header_map(sfc_header const header, enum sfc_map * const map)
 {
     assert(header != NULL);
-    switch (SFC_HEADER_ROM_MODE(header) & 0xF)
+    switch (SFC_HEADER_MAP_MODE(header) & 0xF)
     {
     case 0:
         *map = SFC_MAP_LO;
@@ -100,7 +100,7 @@ bool sfc_header_map(sfc_header const header, enum sfc_map * const map)
 bool sfc_header_set_map(sfc_header const header, enum sfc_map const map)
 {
     assert(header != NULL);
-    uint_least8_t mode = SFC_HEADER_ROM_MODE(header);
+    uint_least8_t mode = SFC_HEADER_MAP_MODE(header);
     mode &= ~0xF;
     switch (map)
     {
@@ -116,18 +116,18 @@ bool sfc_header_set_map(sfc_header const header, enum sfc_map const map)
     default:
         return false;
     }
-    SFC_HEADER_ROM_MODE(header) = mode;
+    SFC_HEADER_MAP_MODE(header) = mode;
     return true;
 }
 
-bool sfc_header_chipset(sfc_header const header, struct sfc_chipset * const chipset)
+bool sfc_header_cartridge_type(sfc_header const header, struct sfc_cartridge_type * const cartridge_type)
 {
-    struct sfc_chipset output = {
+    struct sfc_cartridge_type output = {
         false,
         false,
         false
     };
-    switch (SFC_HEADER_CHIPSET(header) & 0xF)
+    switch (SFC_HEADER_CARTRIDGE_TYPE(header) & 0xF)
     {
     case 0:
         break;
@@ -157,45 +157,45 @@ bool sfc_header_chipset(sfc_header const header, struct sfc_chipset * const chip
     default:
         return false;
     }
-    *chipset = output;
+    *cartridge_type = output;
     return true;
 }
 
 
-static int_least8_t chipset_id(struct sfc_chipset const chipset)
+static int_least8_t cartridge_type_id(struct sfc_cartridge_type const cartridge_type)
 {
-    if (!chipset.coprocessor)
+    if (!cartridge_type.coprocessor)
     {
-        if (!chipset.ram)
+        if (!cartridge_type.ram)
         {
-            if (chipset.battery)
+            if (cartridge_type.battery)
                 return -1;
             return 0;
         }
-        if (!chipset.battery)
+        if (!cartridge_type.battery)
             return 1;
         return 2;
     }
-    if (chipset.ram)
+    if (cartridge_type.ram)
     {
-        if (!chipset.battery)
+        if (!cartridge_type.battery)
             return 4;
         return 5;
     }
-    if (!chipset.battery)
+    if (!cartridge_type.battery)
         return 3;
     return 6;
 }
 
-bool sfc_header_set_chipset(sfc_header const header, struct sfc_chipset const chipset)
+bool sfc_header_set_cartridge_type(sfc_header const header, struct sfc_cartridge_type const cartridge_type)
 {
-    int_least8_t const new_id = chipset_id(chipset);
+    int_least8_t const new_id = cartridge_type_id(cartridge_type);
     if (new_id == -1)
         return false;
-    uint_least8_t id = SFC_HEADER_CHIPSET(header);
+    uint_least8_t id = SFC_HEADER_CARTRIDGE_TYPE(header);
     id &= ~0xF;
     id |= (new_id & 0xF);
-    SFC_HEADER_CHIPSET(header) = id;
+    SFC_HEADER_CARTRIDGE_TYPE(header) = id;
     return true;
 }
 
