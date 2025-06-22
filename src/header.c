@@ -6,21 +6,25 @@
 
 #include "header.h"
 
-#include <assert.h>
 #include <sfc.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <assert.h>
 
 #include "util.h"
 
 #define SFC_HEADER_TITLE_OFFSET 0xC0
 #define SFC_HEADER_ROM_MODE_OFFSET 0xD5
 #define SFC_HEADER_CHIPSET_OFFSET 0xD6
+#define SFC_HEADER_ROM_SIZE_OFFSET 0xD7
+#define SFC_HEADER_RAM_SIZE_OFFSET 0xD8
 
 #define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
 #define SFC_HEADER_ROM_MODE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_MODE_OFFSET))
 #define SFC_HEADER_CHIPSET(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_CHIPSET_OFFSET))
+#define SFC_HEADER_ROM_SIZE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_SIZE_OFFSET))
+#define SFC_HEADER_RAM_SIZE(x) (*(uint_least8_t*) OFFSET_POINTER(x, SFC_HEADER_RAM_SIZE_OFFSET))
 
 static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
@@ -181,5 +185,33 @@ bool sfc_header_set_chipset(sfc_header const header, struct sfc_chipset const ch
     id &= ~0xF;
     id |= (new_id & 0xF);
     SFC_HEADER_CHIPSET(header) = id;
+    return true;
+}
+
+size_t sfc_header_rom_size(sfc_header const header)
+{
+    return 1 << SFC_HEADER_ROM_SIZE(header);
+}
+
+bool sfc_header_set_rom_size(sfc_header const header, size_t const size)
+{
+    size_t const value = msb(size);
+    if ((size & ~(1 << value)) != 0)
+        return false;
+    SFC_HEADER_ROM_SIZE(header) = value;
+    return true;
+}
+
+size_t sfc_header_ram_size(sfc_header const header)
+{
+    return 1 << SFC_HEADER_RAM_SIZE(header);
+}
+
+bool sfc_header_set_ram_size(sfc_header const header, size_t const size)
+{
+    size_t const value = msb(size);
+    if ((size & ~(1 << value)) != 0)
+        return false;
+    SFC_HEADER_RAM_SIZE(header) = value;
     return true;
 }

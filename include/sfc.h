@@ -58,4 +58,10 @@ void sfc_header_set_map(sfc_header header, enum sfc_map map);
 struct sfc_chipset sfc_header_chipset(sfc_header header);
 bool sfc_header_set_chipset(sfc_header header, struct sfc_chipset chipset);
 
+size_t sfc_header_rom_size(sfc_header header);
+bool sfc_header_set_rom_size(sfc_header header, size_t size);
+
+size_t sfc_header_ram_size(sfc_header header);
+bool sfc_header_set_ram_size(sfc_header header, size_t size);
+
 #endif

@@ -63,6 +63,20 @@ int main(int const argc, char const * const argv[])
     }
     struct sfc_chipset const chipset = sfc_header_chipset(header);
     printf("SRAM: %d, battery: %d, coprocessor: %d\n", chipset.ram, chipset.battery, chipset.coprocessor);
+    if (!sfc_header_set_rom_size(header, 2048))
+    {
+        fprintf(stderr, "Failed to set ROM size\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    }
+    if (!sfc_header_set_ram_size(header, 2048))
+    {
+        fprintf(stderr, "Failed to set RAM size\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    }
+
+    printf("ROM size: %zu KiB, SRAM size: %zu KiB", sfc_header_rom_size(header), sfc_header_ram_size(header));
     sfc_destroy_rom(rom);
     return 0;
 }
