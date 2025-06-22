@@ -27,7 +27,7 @@ static uint_least32_t find_last_set(uint_least32_t const x)
 #if HAS_BUILTIN(__builtin_clzl)
     return sizeof(uint_least32_t) * CHAR_BIT - __builtin_clz(x) - 1;
 #elif defined(_MSC_VER)
-    uint_least32_t index;
+    unsigned long index;
     _BitScanReverse(&index, x);
     return sizeof(uint_least32_t) * CHAR_BIT - index - 1;
 #else

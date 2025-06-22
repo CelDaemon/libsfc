@@ -99,7 +99,7 @@ int main(int const argc, char const * const argv[])
         return 1;
     }
 
-    printf("ROM size: %zu KiB, SRAM size: %zu KiB", sfc_header_rom_size(header), sfc_header_ram_size(header));
+    printf("ROM size: %u KiB, SRAM size: %u KiB", sfc_header_rom_size(header), sfc_header_ram_size(header));
     sfc_destroy_rom(rom);
     return 0;
 }
