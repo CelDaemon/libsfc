@@ -47,15 +47,15 @@ void sfc_destroy_rom(struct sfc_rom *rom);
 sfc_header sfc_rom_header(struct sfc_rom const * rom);
 
 char *sfc_header_title(sfc_header header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
-void sfc_header_set_title(sfc_header header, char title[]);
+bool sfc_header_set_title(sfc_header header, char title[]);
 
 enum sfc_speed sfc_header_speed(sfc_header header);
 void sfc_header_set_speed(sfc_header header, enum sfc_speed speed);
 
-enum sfc_map sfc_header_map(sfc_header header);
-void sfc_header_set_map(sfc_header header, enum sfc_map map);
+bool sfc_header_map(sfc_header header, enum sfc_map * map);
+bool sfc_header_set_map(sfc_header header, enum sfc_map map);
 
-struct sfc_chipset sfc_header_chipset(sfc_header header);
+bool sfc_header_chipset(sfc_header header, struct sfc_chipset * chipset);
 bool sfc_header_set_chipset(sfc_header header, struct sfc_chipset chipset);
 
 size_t sfc_header_rom_size(sfc_header header);

@@ -9,10 +9,9 @@
 #include <sfc.h>
 #include <stdint.h>
 #include <string.h>
-#include <limits.h>
-#include <assert.h>
 
-#include "util.h"
+#include "offset.h"
+#include "msb.h"
 
 #define SFC_HEADER_TITLE_OFFSET 0xC0
 #define SFC_HEADER_ROM_MODE_OFFSET 0xD5
@@ -46,14 +45,21 @@ char *sfc_header_title(sfc_header const header, char title[SFC_HEADER_TITLE_MAX_
     return title;
 }
 
-void sfc_header_set_title(sfc_header const header, char title[])
+bool sfc_header_set_title(sfc_header const header, char title[])
 {
     assert(header != NULL);
     assert(title != NULL);
     size_t const size = strlen(title);
-    assert(size <= SFC_HEADER_TITLE_MAX_SIZE);
+    if (size > SFC_HEADER_TITLE_MAX_SIZE)
+        return false;
+    for (size_t i = 0; i < size; i++)
+    {
+        if (!(title[i] == ' ' || (title[i] >= 'A' && title[i] <= 'Z')))
+            return false;
+    }
     memcpy(SFC_HEADER_TITLE(header), title, size);
     memset(SFC_HEADER_TITLE(header) + size, ' ', SFC_HEADER_TITLE_MAX_SIZE - size);
+    return true;
 }
 
 enum sfc_speed sfc_header_speed(sfc_header const header)
@@ -72,23 +78,26 @@ void sfc_header_set_speed(sfc_header const header, enum sfc_speed const speed)
     SFC_HEADER_ROM_MODE(header) = mode;
 }
 
-enum sfc_map sfc_header_map(sfc_header const header)
+bool sfc_header_map(sfc_header const header, enum sfc_map * const map)
 {
     assert(header != NULL);
     switch (SFC_HEADER_ROM_MODE(header) & 0xF)
     {
     case 0:
-        return SFC_MAP_LO;
+        *map = SFC_MAP_LO;
+        return true;
     case 1:
-        return SFC_MAP_HI;
+        *map = SFC_MAP_HI;
+        return true;
     case 5:
-        return SFC_MAP_EX_HI;
+        *map = SFC_MAP_EX_HI;
+        return true;
     default:
-        abort();
+        return false;
     }
 }
 
-void sfc_header_set_map(sfc_header const header, enum sfc_map const map)
+bool sfc_header_set_map(sfc_header const header, enum sfc_map const map)
 {
     assert(header != NULL);
     uint_least8_t mode = SFC_HEADER_ROM_MODE(header);
@@ -105,12 +114,13 @@ void sfc_header_set_map(sfc_header const header, enum sfc_map const map)
         mode |= 5;
         break;
     default:
-        abort();
+        return false;
     }
     SFC_HEADER_ROM_MODE(header) = mode;
+    return true;
 }
 
-struct sfc_chipset sfc_header_chipset(sfc_header const header)
+bool sfc_header_chipset(sfc_header const header, struct sfc_chipset * const chipset)
 {
     struct sfc_chipset output = {
         false,
@@ -145,9 +155,10 @@ struct sfc_chipset sfc_header_chipset(sfc_header const header)
         output.coprocessor = true;
         break;
     default:
-        abort();
+        return false;
     }
-    return output;
+    *chipset = output;
+    return true;
 }
 
 

@@ -22,13 +22,14 @@ endif ()
 
 
 add_library(sfc STATIC
-        src/sfc.c
         include/sfc.h
+        src/sfc.c
         src/map.h
         src/map.c
         src/header.h
         src/header.c
-        src/util.h
+        src/offset.h
+        src/msb.h
 )
 target_include_directories(sfc PUBLIC include/)
 add_subdirectory(example)

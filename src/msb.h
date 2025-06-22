@@ -1,14 +1,15 @@
 /*
-    SPDX-FileCopyrightText: 2025 CelDaemon <celdaemon@voidgroup.net>
-
+    SPDX-FileCopyrightText: 2025 celdaemon <celdaemon@voidgroup.net>
+    
     SPDX-License-Identifier: BSD-3-Clause
 */
 
-#ifndef _SFC_UTIL_H
-#define _SFC_UTIL_H
+#ifndef _SFC_MSB_H
+#define _SFC_MSB_H
 
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 
 #if _MSC_VER
 #include <intrin.h>
@@ -19,8 +20,6 @@
 #else
 #define HAS_BUILTIN(x) 0
 #endif
-
-#define OFFSET_POINTER(ptr, offset) ((void*) (((char*)(ptr)) + (offset)))
 
 static size_t msb(size_t const x)
 {

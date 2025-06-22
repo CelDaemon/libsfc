@@ -42,14 +42,31 @@ int main(int const argc, char const * const argv[])
     printf("Data: %p, Size: %zu\n", rom->data, rom->size);
     sfc_header const header = sfc_rom_header(rom);
     printf("Header: %p\n", rom->header);
-    sfc_header_set_title(header, "meow");
+    if (!sfc_header_set_title(header, "MEOW A"))
+    {
+        fprintf(stderr, "Failed to set title\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    };
     char title[22];
     sfc_header_title(header, title);
     printf("Title: %s\n", title);
     sfc_header_set_speed(header, SFC_FAST);
     printf("ROM Speed: %d\n", sfc_header_speed(header));
-    sfc_header_set_map(header, SFC_MAP_EX_HI);
-    printf("ROM Map: %d\n", sfc_header_map(header));
+    if (!sfc_header_set_map(header, SFC_MAP_EX_HI))
+    {
+        fprintf(stderr, "Failed to set map\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    };
+    enum sfc_map map;
+    if (!sfc_header_map(header, &map))
+    {
+        fprintf(stderr, "Failed to get map\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    }
+    printf("ROM Map: %d\n", map);
     struct sfc_chipset const new_chipset = {
         true,
         true,
@@ -61,7 +78,13 @@ int main(int const argc, char const * const argv[])
         sfc_destroy_rom(rom);
         return 1;
     }
-    struct sfc_chipset const chipset = sfc_header_chipset(header);
+    struct sfc_chipset chipset;
+    if (!sfc_header_chipset(header, &chipset))
+    {
+        fprintf(stderr, "Failed to get chipset\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    }
     printf("SRAM: %d, battery: %d, coprocessor: %d\n", chipset.ram, chipset.battery, chipset.coprocessor);
     if (!sfc_header_set_rom_size(header, 2048))
     {

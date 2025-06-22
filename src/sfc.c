@@ -9,7 +9,7 @@
 #include <string.h>
 
 #include "map.h"
-#include "util.h"
+#include "offset.h"
 
 
 struct sfc_rom *sfc_create_rom(const void * const input_data, size_t const size, const bool * const copier, const enum sfc_map * const map)
