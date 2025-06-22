@@ -4,8 +4,8 @@
     SPDX-License-Identifier: BSD-3-Clause
 */
 
-#ifndef _SFC_MSB_H
-#define _SFC_MSB_H
+#ifndef _SFC_FLS_H
+#define _SFC_FLS_H
 
 #include <assert.h>
 #include <limits.h>
@@ -21,18 +21,18 @@
 #define HAS_BUILTIN(x) 0
 #endif
 
-static size_t msb(size_t const x)
+static uint_least32_t find_last_set(uint_least32_t const x)
 {
     assert(x != 0);
 #if HAS_BUILTIN(__builtin_clzl)
-    return sizeof(size_t) * CHAR_BIT - __builtin_clzl(x) - 1;
+    return sizeof(uint_least32_t) * CHAR_BIT - __builtin_clz(x) - 1;
 #elif defined(_MSC_VER)
-    size_t index;
+    uint_least32_t index;
     _BitScanReverse(&index, x);
-    return sizeof(size_t) * CHAR_BIT - index - 1;
+    return sizeof(uint_least32_t) * CHAR_BIT - index - 1;
 #else
-    size_t a = x;
-    size_t c = 0;
+    uint_least32_t a = x;
+    uint_least32_t c = 0;
     while (a >>= 1)
         c++;
     return c;

@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "offset.h"
-#include "msb.h"
+#include "find_last_set.h"
 
 #define SFC_HEADER_TITLE_OFFSET 0xC0
 #define SFC_HEADER_ROM_MODE_OFFSET 0xD5
@@ -199,29 +199,29 @@ bool sfc_header_set_chipset(sfc_header const header, struct sfc_chipset const ch
     return true;
 }
 
-size_t sfc_header_rom_size(sfc_header const header)
+uint_least32_t sfc_header_rom_size(sfc_header const header)
 {
-    return ((size_t)1) << SFC_HEADER_ROM_SIZE(header);
+    return 1 << SFC_HEADER_ROM_SIZE(header);
 }
 
-bool sfc_header_set_rom_size(sfc_header const header, size_t const size)
+bool sfc_header_set_rom_size(sfc_header const header, uint_least32_t const size)
 {
-    size_t const value = msb(size);
-    if ((size & ~(((size_t)1) << value)) != 0)
+    uint_least32_t const value = find_last_set(size);
+    if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_ROM_SIZE(header) = (uint_least8_t) value & 0xFF;
     return true;
 }
 
-size_t sfc_header_ram_size(sfc_header const header)
+uint_least32_t sfc_header_ram_size(sfc_header const header)
 {
-    return ((size_t)1) << SFC_HEADER_RAM_SIZE(header);
+    return 1 << SFC_HEADER_RAM_SIZE(header);
 }
 
-bool sfc_header_set_ram_size(sfc_header const header, size_t const size)
+bool sfc_header_set_ram_size(sfc_header const header, uint_least32_t const size)
 {
-    size_t const value = msb(size);
-    if ((size & ~(((size_t)1) << value)) != 0)
+    size_t const value = find_last_set(size);
+    if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_RAM_SIZE(header) = (uint_least8_t) value & 0xFF;
     return true;
