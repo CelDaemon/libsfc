@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 CelDaemon <celdaemon@voidgroup.net>
+# SPDX-License-Identifier: BSD-3-Clause
+
 name: build.yml
 on:
   push:
