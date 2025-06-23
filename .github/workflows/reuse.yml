@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         name: Checkout Repository
-      - run: sudo apt install reuse
+      - run: pip install reuse
         name: Install Reuse
       - run: reuse lint
         name: Check Reuse Conformance
