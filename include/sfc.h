@@ -35,9 +35,24 @@ struct sfc_cartridge_type
 
 enum sfc_destination_code
 {
-    SFC_DESTINATION_NTSC,
-    SFC_DESTINATION_PAL,
-    SFC_DESTINATION_JPN
+    SFC_DESTINATION_JAPAN,
+    SFC_DESTINATION_NORTH_AMERICA,
+    SFC_DESTINATION_EUROPE,
+    SFC_DESTINATION_SCANDINAVIA,
+    SFC_DESTINATION_FRENCH_EUROPE,
+    SFC_DESTINATION_DUTCH,
+    SFC_DESTINATION_SPANISH,
+    SFC_DESTINATION_GERMAN,
+    SFC_DESTINATION_ITALIAN,
+    SFC_DESTINATION_CHINESE,
+    SFC_DESTINATION_KOREAN,
+    SFC_DESTINATION_COMMON,
+    SFC_DESTINATION_CANADA,
+    SFC_DESTINATION_BRAZIL,
+    SFC_DESTINATION_AUSTRALIA,
+    SFC_DESTINATION_OTHER1,
+    SFC_DESTINATION_OTHER2,
+    SFC_DESTINATION_OTHER3
 };
 
 typedef void *sfc_header;
@@ -66,10 +81,13 @@ bool sfc_header_set_map(sfc_header header, enum sfc_map map);
 bool sfc_header_cartridge_type(sfc_header header, struct sfc_cartridge_type * cartridge_type);
 bool sfc_header_set_cartridge_type(sfc_header header, struct sfc_cartridge_type cartridge_type);
 
-uint_least32_t sfc_header_rom_size(sfc_header header);
-bool sfc_header_set_rom_size(sfc_header header, uint_least32_t size);
+uint32_t sfc_header_rom_size(sfc_header header);
+bool sfc_header_set_rom_size(sfc_header header, uint32_t size);
 
-uint_least32_t sfc_header_ram_size(sfc_header header);
-bool sfc_header_set_ram_size(sfc_header header, uint_least32_t size);
+uint32_t sfc_header_ram_size(sfc_header header);
+bool sfc_header_set_ram_size(sfc_header header, uint32_t size);
+
+bool sfc_header_destination_code(sfc_header header, enum sfc_destination_code * destination_code);
+bool sfc_header_set_destination_code(sfc_header header, enum sfc_destination_code destination_code);
 
 #endif

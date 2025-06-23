@@ -30,6 +30,7 @@ add_library(sfc STATIC
         src/header.c
         src/offset.h
         src/find_last_set.h
+        src/find_last_set.c
 )
 target_include_directories(sfc PUBLIC include/)
 add_subdirectory(example)

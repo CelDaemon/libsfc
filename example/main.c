@@ -99,7 +99,24 @@ int main(int const argc, char const * const argv[])
         return 1;
     }
 
-    printf("ROM size: %u KiB, SRAM size: %u KiB", sfc_header_rom_size(header), sfc_header_ram_size(header));
+    printf("ROM size: %u KiB, SRAM size: %u KiB\n", sfc_header_rom_size(header), sfc_header_ram_size(header));
+
+
+    if (!sfc_header_set_destination_code(header, SFC_DESTINATION_AUSTRALIA))
+    {
+        fprintf(stderr, "Failed to set destination code\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    }
+
+    enum sfc_destination_code destination_code;
+    if (!sfc_header_destination_code(header, &destination_code))
+    {
+        fprintf(stderr, "Failed to get destination code\n");
+        sfc_destroy_rom(rom);
+        return 1;
+    };
+    printf("Destination code: %d\n", destination_code);
     sfc_destroy_rom(rom);
     return 0;
 }
