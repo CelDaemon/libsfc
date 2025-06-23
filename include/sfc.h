@@ -74,39 +74,39 @@ enum sfc_destination_code
     SFC_DESTINATION_OTHER3
 };
 
-typedef void *sfc_header;
+typedef void sfc_header;
 
 struct sfc_rom
 {
     void *data;
     size_t size;
-    sfc_header header;
+    sfc_header *header;
 };
 
 
 struct sfc_rom *sfc_create_rom(void const *input_data, size_t size, bool const *copier, enum sfc_map const *map);
 void sfc_destroy_rom(struct sfc_rom *rom);
-sfc_header sfc_rom_header(struct sfc_rom const * rom);
+sfc_header *sfc_rom_header(struct sfc_rom const * rom);
 
-char *sfc_header_title(sfc_header header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
-bool sfc_header_set_title(sfc_header header, char title[]);
+char *sfc_header_title(sfc_header const *header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
+bool sfc_header_set_title(sfc_header *header, char title[]);
 
-enum sfc_speed sfc_header_speed(sfc_header header);
-void sfc_header_set_speed(sfc_header header, enum sfc_speed speed);
+enum sfc_speed sfc_header_speed(sfc_header const *header);
+void sfc_header_set_speed(sfc_header *header, enum sfc_speed speed);
 
-bool sfc_header_map(sfc_header header, enum sfc_map * map);
-bool sfc_header_set_map(sfc_header header, enum sfc_map map);
+bool sfc_header_map(sfc_header const *header, enum sfc_map * map);
+bool sfc_header_set_map(sfc_header *header, enum sfc_map map);
 
-bool sfc_header_cartridge_type(sfc_header header, struct sfc_cartridge_type * cartridge_type);
-bool sfc_header_set_cartridge_type(sfc_header header, struct sfc_cartridge_type cartridge_type);
+bool sfc_header_cartridge_type(sfc_header const *header, struct sfc_cartridge_type * cartridge_type);
+bool sfc_header_set_cartridge_type(sfc_header *header, struct sfc_cartridge_type cartridge_type);
 
-uint32_t sfc_header_rom_size(sfc_header header);
-bool sfc_header_set_rom_size(sfc_header header, uint32_t size);
+uint32_t sfc_header_rom_size(sfc_header const *header);
+bool sfc_header_set_rom_size(sfc_header *header, uint32_t size);
 
-uint32_t sfc_header_ram_size(sfc_header header);
-bool sfc_header_set_ram_size(sfc_header header, uint32_t size);
+uint32_t sfc_header_ram_size(sfc_header const *header);
+bool sfc_header_set_ram_size(sfc_header *header, uint32_t size);
 
-bool sfc_header_destination_code(sfc_header header, enum sfc_destination_code * destination_code);
-bool sfc_header_set_destination_code(sfc_header header, enum sfc_destination_code destination_code);
+bool sfc_header_destination_code(sfc_header const *header, enum sfc_destination_code * destination_code);
+bool sfc_header_set_destination_code(sfc_header *header, enum sfc_destination_code destination_code);
 
 #endif

@@ -59,7 +59,7 @@ int main(int const argc, char const * const argv[])
         return 2;
     }
     printf("Data: %p, Size: %zu\n", rom->data, rom->size);
-    sfc_header const header = sfc_rom_header(rom);
+    sfc_header *const header = sfc_rom_header(rom);
     printf("Header: %p\n", rom->header);
     if (!sfc_header_set_title(header, "MEOW A"))
     {

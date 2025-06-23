@@ -57,7 +57,7 @@ static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
     return 0;
 }
 
-char *sfc_header_title(sfc_header const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
+char *sfc_header_title(sfc_header const * const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     assert(header != NULL);
     assert(title != NULL);
@@ -67,7 +67,7 @@ char *sfc_header_title(sfc_header const header, char title[SFC_HEADER_TITLE_MAX_
     return title;
 }
 
-bool sfc_header_set_title(sfc_header const header, char title[])
+bool sfc_header_set_title(sfc_header * const header, char title[])
 {
     assert(header != NULL);
     assert(title != NULL);
@@ -84,13 +84,13 @@ bool sfc_header_set_title(sfc_header const header, char title[])
     return true;
 }
 
-enum sfc_speed sfc_header_speed(sfc_header const header)
+enum sfc_speed sfc_header_speed(sfc_header const * const header)
 {
     assert(header != NULL);
     return (SFC_HEADER_MAP_MODE(header) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
 }
 
-void sfc_header_set_speed(sfc_header const header, enum sfc_speed const speed)
+void sfc_header_set_speed(sfc_header * const header, enum sfc_speed const speed)
 {
     assert(header != NULL);
     uint8_t const value = speed == SFC_FAST ? 1 : 0;
@@ -100,7 +100,7 @@ void sfc_header_set_speed(sfc_header const header, enum sfc_speed const speed)
     SFC_HEADER_MAP_MODE(header) = mode;
 }
 
-bool sfc_header_map(sfc_header const header, enum sfc_map * const map)
+bool sfc_header_map(sfc_header const * const header, enum sfc_map * const map)
 {
     assert(header != NULL);
     switch (SFC_HEADER_MAP_MODE(header) & 0xF)
@@ -119,7 +119,7 @@ bool sfc_header_map(sfc_header const header, enum sfc_map * const map)
     }
 }
 
-bool sfc_header_set_map(sfc_header const header, enum sfc_map const map)
+bool sfc_header_set_map(sfc_header * const header, enum sfc_map const map)
 {
     assert(header != NULL);
     uint8_t mode = SFC_HEADER_MAP_MODE(header);
@@ -142,7 +142,7 @@ bool sfc_header_set_map(sfc_header const header, enum sfc_map const map)
     return true;
 }
 
-bool sfc_header_cartridge_type(sfc_header const header, struct sfc_cartridge_type * const cartridge_type)
+bool sfc_header_cartridge_type(sfc_header const * const header, struct sfc_cartridge_type * const cartridge_type)
 {
     struct sfc_cartridge_type output = {
         false,
@@ -209,7 +209,7 @@ static int_least8_t cartridge_type_id(struct sfc_cartridge_type const cartridge_
     return 6;
 }
 
-bool sfc_header_set_cartridge_type(sfc_header const header, struct sfc_cartridge_type const cartridge_type)
+bool sfc_header_set_cartridge_type(sfc_header * const header, struct sfc_cartridge_type const cartridge_type)
 {
     int8_t const new_id = cartridge_type_id(cartridge_type);
     if (new_id == -1)
@@ -221,12 +221,12 @@ bool sfc_header_set_cartridge_type(sfc_header const header, struct sfc_cartridge
     return true;
 }
 
-uint32_t sfc_header_rom_size(sfc_header const header)
+uint32_t sfc_header_rom_size(sfc_header const * const header)
 {
     return 1 << SFC_HEADER_ROM_SIZE(header);
 }
 
-bool sfc_header_set_rom_size(sfc_header const header, uint32_t const size)
+bool sfc_header_set_rom_size(sfc_header * const header, uint32_t const size)
 {
     uint32_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
@@ -235,12 +235,12 @@ bool sfc_header_set_rom_size(sfc_header const header, uint32_t const size)
     return true;
 }
 
-uint32_t sfc_header_ram_size(sfc_header const header)
+uint32_t sfc_header_ram_size(sfc_header const * const header)
 {
     return 1 << SFC_HEADER_RAM_SIZE(header);
 }
 
-bool sfc_header_set_ram_size(sfc_header const header, uint32_t const size)
+bool sfc_header_set_ram_size(sfc_header * const header, uint32_t const size)
 {
     size_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
@@ -251,7 +251,7 @@ bool sfc_header_set_ram_size(sfc_header const header, uint32_t const size)
 
 
 
-bool sfc_header_destination_code(sfc_header const header, enum sfc_destination_code * const destination_code)
+bool sfc_header_destination_code(sfc_header const * const header, enum sfc_destination_code * const destination_code)
 {
     switch (SFC_HEADER_DESTINATION_CODE(header))
     {
@@ -314,7 +314,7 @@ bool sfc_header_destination_code(sfc_header const header, enum sfc_destination_c
     }
 }
 
-bool sfc_header_set_destination_code(sfc_header const header, enum sfc_destination_code const destination_code)
+bool sfc_header_set_destination_code(sfc_header * const header, enum sfc_destination_code const destination_code)
 {
     uint8_t value;
     switch (destination_code)
