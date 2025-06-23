@@ -1,28 +1,19 @@
-# SPDX-FileCopyrightText: 2025 CelDaemon <celdaemon@voidgroup.net>
-# SPDX-License-Identifier: BSD-3-Clause
-
 cmake_minimum_required(VERSION 3.31)
-
-
-
 
 project(libsfc
         VERSION 0.1.0
         LANGUAGES C
 )
 
-
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
-
 
 if (MSVC)
     add_compile_options(/W4 /permissive-)
 else ()
     add_compile_options(-Wall -Wextra -Wpedantic -Wswitch-enum -Wswitch-default)
 endif ()
-
 
 add_library(sfc STATIC
         include/sfc.h
@@ -36,6 +27,7 @@ add_library(sfc STATIC
         src/find_last_set.c
 )
 target_include_directories(sfc PUBLIC include/)
+
 add_subdirectory(example)
 add_subdirectory(verify)
 

@@ -1,5 +1,2 @@
-# SPDX-FileCopyrightText: 2025 CelDaemon <celdaemon@voidgroup.net>
-# SPDX-License-Identifier: BSD-3-Clause
-
 cmake-build-*
 rom.smc
