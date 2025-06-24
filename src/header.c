@@ -236,7 +236,7 @@ uint32_t sfc_header_rom_size(sfc_header const * const header)
 
 bool sfc_header_set_rom_size(sfc_header * const header, uint32_t const size)
 {
-    uint32_t const value = sfc_find_last_set(size);
+    uint32_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_ROM_SIZE(header) = (uint8_t) value;
@@ -250,7 +250,7 @@ uint32_t sfc_header_ram_size(sfc_header const * const header)
 
 bool sfc_header_set_ram_size(sfc_header * const header, uint32_t const size)
 {
-    size_t const value = sfc_find_last_set(size);
+    size_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_RAM_SIZE(header) = (uint8_t) value;

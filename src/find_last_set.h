@@ -27,7 +27,35 @@
 #define _SFC_FLS_H
 
 #include <stdint.h>
+#include <assert.h>
+#include <limits.h>
 
-uint32_t sfc_find_last_set(uint32_t x);
+#if _MSC_VER
+#include <intrin.h>
+#endif
+
+#if defined(__has_builtin)
+#define HAS_BUILTIN(x) __has_builtin(x)
+#else
+#define HAS_BUILTIN(x) 0
+#endif
+
+static uint32_t find_last_set(uint32_t const x)
+{
+    assert(x != 0);
+#if HAS_BUILTIN(__builtin_clzl)
+    return sizeof(uint32_t) * CHAR_BIT - __builtin_clz(x) - 1;
+#elif defined(_MSC_VER)
+    unsigned long index;
+    _BitScanReverse(&index, x);
+    return sizeof(uint32_t) * CHAR_BIT - index - 1;
+#else
+    uint32_t a = x;
+    uint32_t c = 0;
+    while (a >>= 1)
+        c++;
+    return c;
+#endif
+}
 
 #endif
