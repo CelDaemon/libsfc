@@ -23,12 +23,15 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <assert.h>
+#include <limits.h>
 #include <sfc.h>
 
 #include "find_last_set.h"
 
 uint16_t sfc_checksum(struct sfc_rom const * const rom) {
-    size_t const main_size = ((size_t) 1) << sfc_find_last_set(rom->memory_size);
+    assert(rom->memory_size <= UINT32_MAX);
+    size_t const main_size = ((size_t) 1) << sfc_find_last_set((uint32_t) rom->memory_size);
     size_t const remainder_size = rom->memory_size - main_size;
 
     uint8_t const * const data = rom->memory;
