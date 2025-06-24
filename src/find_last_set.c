@@ -38,7 +38,7 @@
 #define HAS_BUILTIN(x) 0
 #endif
 
-uint32_t find_last_set(uint32_t const x)
+uint32_t sfc_find_last_set(uint32_t const x)
 {
     assert(x != 0);
 #if HAS_BUILTIN(__builtin_clzl)

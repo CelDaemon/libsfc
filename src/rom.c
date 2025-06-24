@@ -57,6 +57,10 @@ struct sfc_rom *sfc_create_rom(const void * const input_data, size_t const size,
 
     output_rom->data = output_data;
     output_rom->size = size;
+
+    output_rom->memory = OFFSET_POINTER(output_data, copier_offset);
+    output_rom->memory_size = size - copier_offset;
+
     output_rom->header = OFFSET_POINTER(output_data, copier_offset + sfc_header_offset(final_map));
 
     return output_rom;

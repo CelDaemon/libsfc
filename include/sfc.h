@@ -81,6 +81,8 @@ struct sfc_rom
 {
     void *data;
     size_t size;
+    void *memory;
+    size_t memory_size;
     sfc_header *header;
 };
 
@@ -116,5 +118,10 @@ void sfc_header_set_developer_id(sfc_header *header, uint8_t developer_id);
 
 uint8_t sfc_header_version(sfc_header const *header);
 void sfc_header_set_version(sfc_header *header, uint8_t version);
+
+uint16_t sfc_header_checksum(sfc_header const *header);
+void sfc_header_set_checksum(sfc_header *header, uint16_t checksum);
+
+uint16_t sfc_checksum(struct sfc_rom const *rom);
 
 #endif

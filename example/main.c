@@ -59,6 +59,7 @@ int main(int const argc, char const * const argv[])
         return 2;
     }
     printf("Data: %p, Size: %zu\n", rom->data, rom->size);
+    printf("Calculated checksum: %hX\n", sfc_checksum(rom));
     sfc_header *const header = sfc_rom_header(rom);
     printf("Header: %p\n", rom->header);
     if (!sfc_header_set_title(header, "MEOW A"))
@@ -141,6 +142,7 @@ int main(int const argc, char const * const argv[])
     printf("Developer ID: %u\n", sfc_header_developer_id(header));
     sfc_header_set_version(header, 10);
     printf("Version: %u\n", sfc_header_version(header));
+    printf("Checksum: %hX\n", sfc_header_checksum(header));
     sfc_destroy_rom(rom);
     return 0;
 }

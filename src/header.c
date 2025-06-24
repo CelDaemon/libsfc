@@ -41,6 +41,7 @@
 #define SFC_HEADER_DESTINATION_CODE_OFFSET 0xD9
 #define SFC_HEADER_DEVELOPER_ID_OFFSET 0xDA
 #define SFC_HEADER_VERSION_OFFSET 0xDB
+#define SFC_HEADER_CHECKSUM_OFFSET 0xDE
 
 #define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
 #define SFC_HEADER_MAP_MODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_MAP_MODE_OFFSET))
@@ -50,6 +51,7 @@
 #define SFC_HEADER_DESTINATION_CODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DESTINATION_CODE_OFFSET))
 #define SFC_HEADER_DEVELOPER_ID(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DEVELOPER_ID_OFFSET))
 #define SFC_HEADER_VERSION(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_VERSION_OFFSET))
+#define SFC_HEADER_CHECKSUM(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
 
 
 static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
@@ -234,7 +236,7 @@ uint32_t sfc_header_rom_size(sfc_header const * const header)
 
 bool sfc_header_set_rom_size(sfc_header * const header, uint32_t const size)
 {
-    uint32_t const value = find_last_set(size);
+    uint32_t const value = sfc_find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_ROM_SIZE(header) = (uint8_t) value;
@@ -248,7 +250,7 @@ uint32_t sfc_header_ram_size(sfc_header const * const header)
 
 bool sfc_header_set_ram_size(sfc_header * const header, uint32_t const size)
 {
-    size_t const value = find_last_set(size);
+    size_t const value = sfc_find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_RAM_SIZE(header) = (uint8_t) value;
@@ -404,4 +406,12 @@ uint8_t sfc_header_version(sfc_header const * const header) {
 
 void sfc_header_set_version(sfc_header * const header, uint8_t const version) {
     SFC_HEADER_VERSION(header) = version;
+}
+
+uint16_t sfc_header_checksum(sfc_header const * const header) {
+    return SFC_HEADER_CHECKSUM(header);
+}
+
+void sfc_header_set_checksum(sfc_header * const header, uint16_t const checksum) {
+    SFC_HEADER_CHECKSUM(header) = checksum;
 }

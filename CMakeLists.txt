@@ -17,7 +17,7 @@ endif ()
 
 add_library(sfc STATIC
         include/sfc.h
-        src/sfc.c
+        src/rom.c
         src/map.h
         src/map.c
         src/header.h
@@ -25,6 +25,7 @@ add_library(sfc STATIC
         src/offset.h
         src/find_last_set.h
         src/find_last_set.c
+        src/checksum.c
 )
 target_include_directories(sfc PUBLIC include/)
 
