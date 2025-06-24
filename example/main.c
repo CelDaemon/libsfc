@@ -60,8 +60,8 @@ int main(int const argc, char const * const argv[])
     }
     printf("Data: %p, Size: %zu\n", rom->data, rom->size);
     printf("Calculated checksum: %hX\n", sfc_checksum(rom));
-    sfc_header *const header = sfc_rom_header(rom);
-    printf("Header: %p\n", rom->header);
+    struct sfc_header const header = sfc_rom_header(rom);
+    printf("Header: %p\n", header.data);
     if (!sfc_header_set_title(header, "MEOW A"))
     {
         fprintf(stderr, "Failed to set title\n");
@@ -138,7 +138,6 @@ int main(int const argc, char const * const argv[])
     };
     printf("Destination code: %d\n", destination_code);
     sfc_header_set_developer_id(header, 10);
-    printf("Extended header available: %u\n", sfc_header_extended_available(header));
     printf("Developer ID: %u\n", sfc_header_developer_id(header));
     sfc_header_set_version(header, 10);
     printf("Version: %u\n", sfc_header_version(header));

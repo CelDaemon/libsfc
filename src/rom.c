@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "header.h"
 #include "map.h"
 #include "offset.h"
 
@@ -61,7 +62,13 @@ struct sfc_rom *sfc_create_rom(const void * const input_data, size_t const size,
     output_rom->memory = OFFSET_POINTER(output_data, copier_offset);
     output_rom->memory_size = size - copier_offset;
 
-    output_rom->header = OFFSET_POINTER(output_data, copier_offset + sfc_header_offset(final_map));
+    void * const header_data = OFFSET_POINTER(output_data, copier_offset + sfc_header_offset(final_map));
+
+    struct sfc_header const header = {
+        header_data,
+        sfc_extended_header_available(header_data)
+    };
+    output_rom->header = header;
 
     return output_rom;
 
@@ -79,7 +86,7 @@ void sfc_destroy_rom(struct sfc_rom * const rom)
     free(rom);
 }
 
-sfc_header *sfc_rom_header(struct sfc_rom const * const rom)
+struct sfc_header sfc_rom_header(struct sfc_rom const * const rom)
 {
     assert(rom != NULL);
     return rom->header;

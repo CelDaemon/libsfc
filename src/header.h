@@ -26,9 +26,11 @@
 #ifndef _SFC_HEADER_H
 #define _SFC_HEADER_H
 
+#include <stdbool.h>
+
 #define SFC_HEADER_SIZE 32
-#define SFC_HEADER_EXTENDED_AVAILABLE 33
+#define SFC_EXTENDED_HEADER_AVAILABLE 33
 
-
+bool sfc_extended_header_available(void const * header_data);
 
 #endif

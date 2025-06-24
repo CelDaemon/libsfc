@@ -65,17 +65,22 @@ static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
     return 0;
 }
 
-char *sfc_header_title(sfc_header const * const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
+bool sfc_extended_header_available(void const * header_data) {
+    assert(header_data != NULL);
+    return SFC_HEADER_DEVELOPER_ID(header_data) == SFC_EXTENDED_HEADER_AVAILABLE;
+}
+
+char *sfc_header_title(struct sfc_header const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     assert(header != NULL);
     assert(title != NULL);
-    size_t const size = find_title_size(SFC_HEADER_TITLE(header));
-    memcpy(title, SFC_HEADER_TITLE(header), size);
+    size_t const size = find_title_size(SFC_HEADER_TITLE(header.data));
+    memcpy(title, SFC_HEADER_TITLE(header.data), size);
     title[size] = '\0';
     return title;
 }
 
-bool sfc_header_set_title(sfc_header * const header, char title[])
+bool sfc_header_set_title(struct sfc_header const header, char title[])
 {
     assert(header != NULL);
     assert(title != NULL);
@@ -87,31 +92,31 @@ bool sfc_header_set_title(sfc_header * const header, char title[])
         if (!(title[i] == ' ' || (title[i] >= 'A' && title[i] <= 'Z')))
             return false;
     }
-    memcpy(SFC_HEADER_TITLE(header), title, size);
-    memset(SFC_HEADER_TITLE(header) + size, ' ', SFC_HEADER_TITLE_MAX_SIZE - size);
+    memcpy(SFC_HEADER_TITLE(header.data), title, size);
+    memset(SFC_HEADER_TITLE(header.data) + size, ' ', SFC_HEADER_TITLE_MAX_SIZE - size);
     return true;
 }
 
-enum sfc_speed sfc_header_speed(sfc_header const * const header)
+enum sfc_speed sfc_header_speed(struct sfc_header const header)
 {
     assert(header != NULL);
-    return (SFC_HEADER_MAP_MODE(header) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
+    return (SFC_HEADER_MAP_MODE(header.data) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
 }
 
-void sfc_header_set_speed(sfc_header * const header, enum sfc_speed const speed)
+void sfc_header_set_speed(struct sfc_header const header, enum sfc_speed const speed)
 {
     assert(header != NULL);
     uint8_t const value = speed == SFC_FAST ? 1 : 0;
-    uint8_t mode = SFC_HEADER_MAP_MODE(header);
+    uint8_t mode = SFC_HEADER_MAP_MODE(header.data);
     mode &= ~0x10;
     mode |= value << 4;
-    SFC_HEADER_MAP_MODE(header) = mode;
+    SFC_HEADER_MAP_MODE(header.data) = mode;
 }
 
-bool sfc_header_map(sfc_header const * const header, enum sfc_map * const map)
+bool sfc_header_map(struct sfc_header const header, enum sfc_map * const map)
 {
     assert(header != NULL);
-    switch (SFC_HEADER_MAP_MODE(header) & 0xF)
+    switch (SFC_HEADER_MAP_MODE(header.data) & 0xF)
     {
     case 0:
         *map = SFC_MAP_LO;
@@ -127,10 +132,10 @@ bool sfc_header_map(sfc_header const * const header, enum sfc_map * const map)
     }
 }
 
-bool sfc_header_set_map(sfc_header * const header, enum sfc_map const map)
+bool sfc_header_set_map(struct sfc_header const header, enum sfc_map const map)
 {
     assert(header != NULL);
-    uint8_t mode = SFC_HEADER_MAP_MODE(header);
+    uint8_t mode = SFC_HEADER_MAP_MODE(header.data);
     mode &= ~0xF;
     switch (map)
     {
@@ -146,18 +151,18 @@ bool sfc_header_set_map(sfc_header * const header, enum sfc_map const map)
     default:
         return false;
     }
-    SFC_HEADER_MAP_MODE(header) = mode;
+    SFC_HEADER_MAP_MODE(header.data) = mode;
     return true;
 }
 
-bool sfc_header_cartridge_type(sfc_header const * const header, struct sfc_cartridge_type * const cartridge_type)
+bool sfc_header_cartridge_type(struct sfc_header const header, struct sfc_cartridge_type * const cartridge_type)
 {
     struct sfc_cartridge_type output = {
         false,
         false,
         false
     };
-    switch (SFC_HEADER_CARTRIDGE_TYPE(header) & 0xF)
+    switch (SFC_HEADER_CARTRIDGE_TYPE(header.data) & 0xF)
     {
     case 0:
         break;
@@ -217,51 +222,51 @@ static int_least8_t cartridge_type_id(struct sfc_cartridge_type const cartridge_
     return 6;
 }
 
-bool sfc_header_set_cartridge_type(sfc_header * const header, struct sfc_cartridge_type const cartridge_type)
+bool sfc_header_set_cartridge_type(struct sfc_header const header, struct sfc_cartridge_type const cartridge_type)
 {
     int8_t const new_id = cartridge_type_id(cartridge_type);
     if (new_id == -1)
         return false;
-    uint8_t id = SFC_HEADER_CARTRIDGE_TYPE(header);
+    uint8_t id = SFC_HEADER_CARTRIDGE_TYPE(header.data);
     id &= ~0xF;
     id |= (new_id & 0xF);
-    SFC_HEADER_CARTRIDGE_TYPE(header) = id;
+    SFC_HEADER_CARTRIDGE_TYPE(header.data) = id;
     return true;
 }
 
-uint32_t sfc_header_rom_size(sfc_header const * const header)
+uint32_t sfc_header_rom_size(struct sfc_header const header)
 {
-    return 1 << SFC_HEADER_ROM_SIZE(header);
+    return 1 << SFC_HEADER_ROM_SIZE(header.data);
 }
 
-bool sfc_header_set_rom_size(sfc_header * const header, uint32_t const size)
+bool sfc_header_set_rom_size(struct sfc_header const header, uint32_t const size)
 {
     uint32_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
-    SFC_HEADER_ROM_SIZE(header) = (uint8_t) value;
+    SFC_HEADER_ROM_SIZE(header.data) = (uint8_t) value;
     return true;
 }
 
-uint32_t sfc_header_ram_size(sfc_header const * const header)
+uint32_t sfc_header_ram_size(struct sfc_header const header)
 {
-    return 1 << SFC_HEADER_RAM_SIZE(header);
+    return 1 << SFC_HEADER_RAM_SIZE(header.data);
 }
 
-bool sfc_header_set_ram_size(sfc_header * const header, uint32_t const size)
+bool sfc_header_set_ram_size(struct sfc_header const header, uint32_t const size)
 {
     size_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
-    SFC_HEADER_RAM_SIZE(header) = (uint8_t) value;
+    SFC_HEADER_RAM_SIZE(header.data) = (uint8_t) value;
     return true;
 }
 
 
 
-bool sfc_header_destination_code(sfc_header const * const header, enum sfc_destination_code * const destination_code)
+bool sfc_header_destination_code(struct sfc_header const header, enum sfc_destination_code * const destination_code)
 {
-    switch (SFC_HEADER_DESTINATION_CODE(header))
+    switch (SFC_HEADER_DESTINATION_CODE(header.data))
     {
     case 0:
         *destination_code = SFC_DESTINATION_JAPAN;
@@ -322,7 +327,7 @@ bool sfc_header_destination_code(sfc_header const * const header, enum sfc_desti
     }
 }
 
-bool sfc_header_set_destination_code(sfc_header * const header, enum sfc_destination_code const destination_code)
+bool sfc_header_set_destination_code(struct sfc_header const header, enum sfc_destination_code const destination_code)
 {
     uint8_t value;
     switch (destination_code)
@@ -384,34 +389,34 @@ bool sfc_header_set_destination_code(sfc_header * const header, enum sfc_destina
     default:
         return false;
     }
-    SFC_HEADER_DESTINATION_CODE(header) = value;
+    SFC_HEADER_DESTINATION_CODE(header.data) = value;
     return true;
 }
 
-bool sfc_header_extended_available(sfc_header const * const header) {
-    return sfc_header_developer_id(header) == SFC_HEADER_EXTENDED_AVAILABLE;
+bool sfc_header_extended_available(struct sfc_header const header) {
+    return sfc_header_developer_id(header) == SFC_EXTENDED_HEADER_AVAILABLE;
 }
 
-uint8_t sfc_header_developer_id(sfc_header const * const header) {
-    return SFC_HEADER_DEVELOPER_ID(header);
+uint8_t sfc_header_developer_id(struct sfc_header const header) {
+    return SFC_HEADER_DEVELOPER_ID(header.data);
 }
 
-void sfc_header_set_developer_id(sfc_header * const header, uint8_t const developer_id) {
-    SFC_HEADER_DEVELOPER_ID(header) = developer_id;
+void sfc_header_set_developer_id(struct sfc_header const header, uint8_t const developer_id) {
+    SFC_HEADER_DEVELOPER_ID(header.data) = developer_id;
 }
 
-uint8_t sfc_header_version(sfc_header const * const header) {
-    return SFC_HEADER_VERSION(header);
+uint8_t sfc_header_version(struct sfc_header const header) {
+    return SFC_HEADER_VERSION(header.data);
 }
 
-void sfc_header_set_version(sfc_header * const header, uint8_t const version) {
-    SFC_HEADER_VERSION(header) = version;
+void sfc_header_set_version(struct sfc_header const header, uint8_t const version) {
+    SFC_HEADER_VERSION(header.data) = version;
 }
 
-uint16_t sfc_header_checksum(sfc_header const * const header) {
-    return SFC_HEADER_CHECKSUM(header);
+uint16_t sfc_header_checksum(struct sfc_header const header) {
+    return SFC_HEADER_CHECKSUM(header.data);
 }
 
-void sfc_header_set_checksum(sfc_header * const header, uint16_t const checksum) {
-    SFC_HEADER_CHECKSUM(header) = checksum;
+void sfc_header_set_checksum(struct sfc_header const header, uint16_t const checksum) {
+    SFC_HEADER_CHECKSUM(header.data) = checksum;
 }
