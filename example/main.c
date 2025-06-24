@@ -136,6 +136,11 @@ int main(int const argc, char const * const argv[])
         return 1;
     };
     printf("Destination code: %d\n", destination_code);
+    sfc_header_set_developer_id(header, 10);
+    printf("Extended header available: %u\n", sfc_header_extended_available(header));
+    printf("Developer ID: %u\n", sfc_header_developer_id(header));
+    sfc_header_set_version(header, 10);
+    printf("Version: %u\n", sfc_header_version(header));
     sfc_destroy_rom(rom);
     return 0;
 }

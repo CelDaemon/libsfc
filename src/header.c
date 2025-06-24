@@ -39,6 +39,8 @@
 #define SFC_HEADER_ROM_SIZE_OFFSET 0xD7
 #define SFC_HEADER_RAM_SIZE_OFFSET 0xD8
 #define SFC_HEADER_DESTINATION_CODE_OFFSET 0xD9
+#define SFC_HEADER_DEVELOPER_ID_OFFSET 0xDA
+#define SFC_HEADER_VERSION_OFFSET 0xDB
 
 #define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
 #define SFC_HEADER_MAP_MODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_MAP_MODE_OFFSET))
@@ -46,13 +48,17 @@
 #define SFC_HEADER_ROM_SIZE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_SIZE_OFFSET))
 #define SFC_HEADER_RAM_SIZE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_RAM_SIZE_OFFSET))
 #define SFC_HEADER_DESTINATION_CODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DESTINATION_CODE_OFFSET))
+#define SFC_HEADER_DEVELOPER_ID(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DEVELOPER_ID_OFFSET))
+#define SFC_HEADER_VERSION(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_VERSION_OFFSET))
+
 
 static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     for (size_t i = 0; i < SFC_HEADER_TITLE_MAX_SIZE; i++)
     {
-        if (title[SFC_HEADER_TITLE_MAX_SIZE - i] != ' ')
-            return SFC_HEADER_TITLE_MAX_SIZE + 1 - i;
+        size_t const length = SFC_HEADER_TITLE_MAX_SIZE - i;
+        if (title[length - 1] != ' ')
+            return length;
     }
     return 0;
 }
@@ -378,4 +384,24 @@ bool sfc_header_set_destination_code(sfc_header * const header, enum sfc_destina
     }
     SFC_HEADER_DESTINATION_CODE(header) = value;
     return true;
+}
+
+bool sfc_header_extended_available(sfc_header const * const header) {
+    return sfc_header_developer_id(header) == SFC_HEADER_EXTENDED_AVAILABLE;
+}
+
+uint8_t sfc_header_developer_id(sfc_header const * const header) {
+    return SFC_HEADER_DEVELOPER_ID(header);
+}
+
+void sfc_header_set_developer_id(sfc_header * const header, uint8_t const developer_id) {
+    SFC_HEADER_DEVELOPER_ID(header) = developer_id;
+}
+
+uint8_t sfc_header_version(sfc_header const * const header) {
+    return SFC_HEADER_VERSION(header);
+}
+
+void sfc_header_set_version(sfc_header * const header, uint8_t const version) {
+    SFC_HEADER_VERSION(header) = version;
 }
