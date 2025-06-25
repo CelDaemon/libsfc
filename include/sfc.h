@@ -92,37 +92,37 @@ struct sfc_rom
 
 struct sfc_rom *sfc_create_rom(void const *input_data, size_t size, bool const *copier, enum sfc_map const *map);
 void sfc_destroy_rom(struct sfc_rom *rom);
-struct sfc_header sfc_rom_header(struct sfc_rom const *rom);
+struct sfc_header *sfc_rom_header(struct sfc_rom *rom);
 
-char *sfc_header_title(struct sfc_header header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
-bool sfc_header_set_title(struct sfc_header header, char title[]);
+char *sfc_header_title(struct sfc_header const *header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
+bool sfc_header_set_title(struct sfc_header *header, char title[]);
 
-enum sfc_speed sfc_header_speed(struct sfc_header header);
-void sfc_header_set_speed(struct sfc_header header, enum sfc_speed speed);
+enum sfc_speed sfc_header_speed(struct sfc_header const *header);
+void sfc_header_set_speed(struct sfc_header *header, enum sfc_speed speed);
 
-bool sfc_header_map(struct sfc_header header, enum sfc_map *map);
-bool sfc_header_set_map(struct sfc_header header, enum sfc_map map);
+bool sfc_header_map(struct sfc_header const *header, enum sfc_map *map);
+bool sfc_header_set_map(struct sfc_header *header, enum sfc_map map);
 
-bool sfc_header_cartridge_type(struct sfc_header header, struct sfc_cartridge_type *cartridge_type);
-bool sfc_header_set_cartridge_type(struct sfc_header header, struct sfc_cartridge_type cartridge_type);
+bool sfc_header_cartridge_type(struct sfc_header const *header, struct sfc_cartridge_type *cartridge_type);
+bool sfc_header_set_cartridge_type(struct sfc_header *header, struct sfc_cartridge_type cartridge_type);
 
-uint32_t sfc_header_rom_size(struct sfc_header header);
-bool sfc_header_set_rom_size(struct sfc_header header, uint32_t size);
+uint32_t sfc_header_rom_size(struct sfc_header const *header);
+bool sfc_header_set_rom_size(struct sfc_header *header, uint32_t size);
 
-uint32_t sfc_header_ram_size(struct sfc_header header);
-bool sfc_header_set_ram_size(struct sfc_header header, uint32_t size);
+uint32_t sfc_header_ram_size(struct sfc_header const *header);
+bool sfc_header_set_ram_size(struct sfc_header *header, uint32_t size);
 
-bool sfc_header_destination_code(struct sfc_header header, enum sfc_destination_code *destination_code);
-bool sfc_header_set_destination_code(struct sfc_header header, enum sfc_destination_code destination_code);
+bool sfc_header_destination_code(struct sfc_header const *header, enum sfc_destination_code *destination_code);
+bool sfc_header_set_destination_code(struct sfc_header *header, enum sfc_destination_code destination_code);
 
-uint8_t sfc_header_developer_id(struct sfc_header header);
-void sfc_header_set_developer_id(struct sfc_header header, uint8_t developer_id);
+uint8_t sfc_header_developer_id(struct sfc_header const *header);
+void sfc_header_set_developer_id(struct sfc_header *header, uint8_t developer_id);
 
-uint8_t sfc_header_version(struct sfc_header header);
-void sfc_header_set_version(struct sfc_header header, uint8_t version);
+uint8_t sfc_header_version(struct sfc_header const *header);
+void sfc_header_set_version(struct sfc_header *header, uint8_t version);
 
-uint16_t sfc_header_checksum(struct sfc_header header);
-void sfc_header_set_checksum(struct sfc_header header, uint16_t checksum);
+uint16_t sfc_header_checksum(struct sfc_header const *header);
+void sfc_header_set_checksum(struct sfc_header *header, uint16_t checksum);
 
 uint16_t sfc_checksum(struct sfc_rom const *rom);
 

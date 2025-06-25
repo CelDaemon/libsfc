@@ -86,8 +86,8 @@ void sfc_destroy_rom(struct sfc_rom * const rom)
     free(rom);
 }
 
-struct sfc_header sfc_rom_header(struct sfc_rom const * const rom)
+struct sfc_header *sfc_rom_header(struct sfc_rom * const rom)
 {
     assert(rom != NULL);
-    return rom->header;
+    return &rom->header;
 }
