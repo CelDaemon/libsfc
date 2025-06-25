@@ -38,7 +38,7 @@ struct sfc_rom *sfc_create_rom(const void * const input_data, size_t const size,
     bool const final_copier = copier != NULL ? *copier : sfc_introspect_copier(size);
     size_t const copier_offset = final_copier ? SFC_COPIER_SIZE : 0;
     size_t const memory_size = size - copier_offset;
-    void const * const input_memory_data = OFFSET_POINTER_READ(input_data, copier_offset);
+    void const * const input_memory_data = OFFSET_POINTER_CONST(input_data, copier_offset);
     enum sfc_map const final_map = map != NULL ? *map : sfc_introspect_map(input_memory_data, memory_size);
 
     if (!sfc_header_available(final_map, memory_size))
@@ -59,10 +59,10 @@ struct sfc_rom *sfc_create_rom(const void * const input_data, size_t const size,
     output_rom->data = output_data;
     output_rom->size = size;
 
-    output_rom->memory = OFFSET_POINTER_WRITE(output_data, copier_offset);
+    output_rom->memory = OFFSET_POINTER(output_data, copier_offset);
     output_rom->memory_size = size - copier_offset;
 
-    void * const header_data = OFFSET_POINTER_WRITE(output_data, copier_offset + sfc_header_offset(final_map));
+    void * const header_data = OFFSET_POINTER(output_data, copier_offset + sfc_header_offset(final_map));
 
     struct sfc_header const header = {
         header_data,
