@@ -43,6 +43,9 @@
 #define SFC_HEADER_VERSION_OFFSET 0xDB
 #define SFC_HEADER_CHECKSUM_OFFSET 0xDE
 
+#define SFC_HEADER_MAKER_CODE_OFFSET 0xB0
+#define SFC_HEADER_GAME_CODE_OFFSET 0xB2
+
 
 
 #define SFC_HEADER_TITLE_CONST(x) ((char const*) OFFSET_POINTER_CONST(x, SFC_HEADER_TITLE_OFFSET))
@@ -72,12 +75,20 @@
 #define SFC_HEADER_CHECKSUM_CONST(x) (*(uint16_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_CHECKSUM_OFFSET))
 #define SFC_HEADER_CHECKSUM(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
 
+#define SFC_HEADER_MAKER_CODE_CONST(x) ((char const*) OFFSET_POINTER_CONST(x, SFC_HEADER_MAKER_CODE_OFFSET))
+#define SFC_HEADER_MAKER_CODE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_MAKER_CODE_OFFSET))
 
-static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
+#define SFC_HEADER_GAME_CODE_CONST(x) ((char const*) OFFSET_POINTER_CONST(x, SFC_HEADER_GAME_CODE_OFFSET))
+#define SFC_HEADER_GAME_CODE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_GAME_CODE_OFFSET))
+
+#define SFC_EXTENDED_HEADER_AVAILABLE 33
+
+
+static size_t find_padded_string_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1], size_t const max_size)
 {
-    for (size_t i = 0; i < SFC_HEADER_TITLE_MAX_SIZE; i++)
+    for (size_t i = 0; i < max_size; i++)
     {
-        size_t const length = SFC_HEADER_TITLE_MAX_SIZE - i;
+        size_t const length = max_size - i;
         if (title[length - 1] != ' ')
             return length;
     }
@@ -89,16 +100,19 @@ bool sfc_extended_header_available(void const * header_data) {
     return SFC_HEADER_DEVELOPER_ID_CONST(header_data) == SFC_EXTENDED_HEADER_AVAILABLE;
 }
 
-char *sfc_header_title(struct sfc_header const * const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
+bool sfc_header_extended_available(struct sfc_header const * const header) {
+    return header->has_extended;
+}
+
+void sfc_header_title(struct sfc_header const * const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     assert(header != NULL);
     assert(header->data != NULL);
     assert(title != NULL);
     void const * const restrict data = header->data;
-    size_t const size = find_title_size(SFC_HEADER_TITLE_CONST(data));
+    size_t const size = find_padded_string_size(SFC_HEADER_TITLE_CONST(data), SFC_HEADER_TITLE_MAX_SIZE);
     memcpy(title, SFC_HEADER_TITLE_CONST(data), size);
     title[size] = '\0';
-    return title;
 }
 
 bool sfc_header_set_title(struct sfc_header const * const header, char title[])
@@ -486,4 +500,64 @@ void sfc_header_set_checksum(struct sfc_header const * const header, uint16_t co
     assert(header->data != NULL);
     void * const restrict data = header->data;
     SFC_HEADER_CHECKSUM(data) = checksum;
+}
+
+bool sfc_header_maker_code(struct sfc_header const * const header, char maker_code[SFC_HEADER_MAKER_CODE_SIZE + 1]) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    assert(maker_code != NULL);
+    if (!header->has_extended)
+        return false;
+    void const * const restrict data = header->data;
+    memcpy(maker_code, SFC_HEADER_MAKER_CODE_CONST(data), 2);
+    maker_code[2] = '\0';
+    return true;
+}
+
+bool sfc_header_set_maker_code(struct sfc_header const * const header, char const maker_code[]) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    assert(maker_code != NULL);
+    if (!header->has_extended || strlen(maker_code) != 2)
+        return false;
+    for (size_t i = 0; i < 2; i++) {
+        if (maker_code[i] < 'A' || maker_code[i] > 'Z')
+            return false;
+    }
+    void * const restrict data = header->data;
+    memcpy(SFC_HEADER_MAKER_CODE(data), maker_code, 2);
+    return true;
+}
+
+bool sfc_header_game_code(struct sfc_header const * const header, char game_code[SFC_HEADER_GAME_CODE_SIZE + 1]) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    assert(game_code != NULL);
+    if (!header->has_extended)
+        return false;
+    void const * const restrict data = header->data;
+    size_t const size = find_padded_string_size(SFC_HEADER_GAME_CODE_CONST(data), SFC_HEADER_GAME_CODE_SIZE);
+    memcpy(game_code, SFC_HEADER_GAME_CODE_CONST(data), size);
+    game_code[size] = '\0';
+    return true;
+}
+
+bool sfc_header_set_game_code(struct sfc_header const * const header, char game_code[]) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    assert(game_code != NULL);
+    if (!header->has_extended)
+        return false;
+    void * const restrict data = header->data;
+    size_t const size = strlen(game_code);
+    if (size != SFC_HEADER_GAME_CODE_SHORT_SIZE && size != SFC_HEADER_GAME_CODE_SIZE)
+        return false;
+    // TODO: Fix check not being removed for valid constants
+    for (size_t i = 0; i < size; i++) {
+        if (game_code[i] < 'A' || game_code[i] > 'Z')
+            return false;
+    }
+    memcpy(SFC_HEADER_GAME_CODE(data), game_code, size);
+    memset(SFC_HEADER_GAME_CODE(data) + size, ' ', SFC_HEADER_GAME_CODE_SIZE - size);
+    return true;
 }

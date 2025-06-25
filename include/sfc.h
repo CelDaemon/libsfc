@@ -31,6 +31,9 @@
 #include <stdint.h>
 
 #define SFC_HEADER_TITLE_MAX_SIZE 21
+#define SFC_HEADER_MAKER_CODE_SIZE 2
+#define SFC_HEADER_GAME_CODE_SIZE 4
+#define SFC_HEADER_GAME_CODE_SHORT_SIZE 2
 
 enum sfc_map
 {
@@ -94,7 +97,9 @@ struct sfc_rom *sfc_create_rom(void const *input_data, size_t size, bool const *
 void sfc_destroy_rom(struct sfc_rom *rom);
 struct sfc_header const *sfc_rom_header(struct sfc_rom const *rom);
 
-char *sfc_header_title(struct sfc_header const *header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
+bool sfc_header_extended_available(struct sfc_header const *header);
+
+void sfc_header_title(struct sfc_header const *header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
 bool sfc_header_set_title(struct sfc_header const *header, char title[]);
 
 enum sfc_speed sfc_header_speed(struct sfc_header const *header);
@@ -123,6 +128,13 @@ void sfc_header_set_version(struct sfc_header const *header, uint8_t version);
 
 uint16_t sfc_header_checksum(struct sfc_header const *header);
 void sfc_header_set_checksum(struct sfc_header const *header, uint16_t checksum);
+
+
+bool sfc_header_maker_code(struct sfc_header const *header, char maker_code[SFC_HEADER_MAKER_CODE_SIZE + 1]);
+bool sfc_header_set_maker_code(struct sfc_header const *header, char const maker_code[]);
+
+bool sfc_header_game_code(struct sfc_header const *header, char game_code[SFC_HEADER_GAME_CODE_SIZE + 1]);
+bool sfc_header_set_game_code(struct sfc_header const *header, char game_code[]);
 
 uint16_t sfc_checksum(struct sfc_rom const *rom);
 

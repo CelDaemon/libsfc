@@ -51,7 +51,8 @@ int main(int const argc, char const * const argv[])
         return 2;
     }
     fclose(file);
-    struct sfc_rom * const rom = sfc_create_rom(data, stat.st_size, NULL, NULL);
+    enum sfc_map load_map = SFC_MAP_LO;
+    struct sfc_rom * const rom = sfc_create_rom(data, stat.st_size, NULL, &load_map);
     free(data);
     if (rom == NULL)
     {
@@ -68,7 +69,7 @@ int main(int const argc, char const * const argv[])
         sfc_destroy_rom(rom);
         return 1;
     };
-    char title[22];
+    char title[SFC_HEADER_TITLE_MAX_SIZE + 1];
     sfc_header_title(header, title);
     printf("Title: %s\n", title);
     sfc_header_set_speed(header, SFC_FAST);
@@ -137,11 +138,39 @@ int main(int const argc, char const * const argv[])
         return 1;
     };
     printf("Destination code: %d\n", destination_code);
-    sfc_header_set_developer_id(header, 10);
+    sfc_header_set_developer_id(header, 33);
     printf("Developer ID: %u\n", sfc_header_developer_id(header));
     sfc_header_set_version(header, 10);
     printf("Version: %u\n", sfc_header_version(header));
     printf("Checksum: %hX\n", sfc_header_checksum(header));
+
+    if (sfc_header_extended_available(header)) {
+        printf("Has extended header!\n");
+        if (!sfc_header_set_maker_code(header, "AB")) {
+            fprintf(stderr, "Failed to set maker code\n");
+            sfc_destroy_rom(rom);
+            return 1;
+        };
+        char maker_code[SFC_HEADER_MAKER_CODE_SIZE + 1];
+        if (!sfc_header_maker_code(header, maker_code)) {
+            fprintf(stderr, "Failed to get maker code\n");
+            sfc_destroy_rom(rom);
+            return 1;
+        }
+        printf("Maker code: %s", maker_code);
+        if (!sfc_header_set_game_code(header, "ABBB")) {
+            fprintf(stderr, "Failed to set game code\n");
+            sfc_destroy_rom(rom);
+            return 1;
+        }
+        char game_code[SFC_HEADER_GAME_CODE_SIZE + 1];
+        if (!sfc_header_game_code(header, game_code)) {
+            fprintf(stderr, "Failed to get game code\n");
+            sfc_destroy_rom(rom);
+            return 1;
+        }
+        printf("Game code: %s", game_code);
+    }
     sfc_destroy_rom(rom);
     return 0;
 }
