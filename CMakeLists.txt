@@ -12,7 +12,7 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 if (MSVC)
     add_compile_options(/W4 /permissive-)
 else ()
-    add_compile_options(-Wall -Wextra -Wpedantic -Wswitch-enum -Wswitch-default)
+    add_compile_options(-Wall -Wextra -Wpedantic -Wswitch-enum -Wswitch-default -Wcast-qual)
 endif ()
 
 add_library(sfc STATIC

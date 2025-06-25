@@ -51,7 +51,7 @@
 #define SFC_HEADER_DESTINATION_CODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DESTINATION_CODE_OFFSET))
 #define SFC_HEADER_DEVELOPER_ID(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DEVELOPER_ID_OFFSET))
 #define SFC_HEADER_VERSION(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_VERSION_OFFSET))
-#define SFC_HEADER_CHECKSUM(x) (*(uint16_t* restrict) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
+#define SFC_HEADER_CHECKSUM(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
 
 
 static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
@@ -87,7 +87,7 @@ bool sfc_header_set_title(struct sfc_header * const header, char title[])
     assert(header != NULL);
     assert(header->data != NULL);
     assert(title != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     size_t const size = strlen(title);
     if (size > SFC_HEADER_TITLE_MAX_SIZE)
         return false;
@@ -113,7 +113,7 @@ void sfc_header_set_speed(struct sfc_header * const header, enum sfc_speed const
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     uint8_t const value = speed == SFC_FAST ? 1 : 0;
     uint8_t mode = SFC_HEADER_MAP_MODE(data);
     mode &= ~0x10;
@@ -146,7 +146,7 @@ bool sfc_header_set_map(struct sfc_header * const header, enum sfc_map const map
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     uint8_t mode = SFC_HEADER_MAP_MODE(data);
     mode &= ~0xF;
     switch (map)
@@ -171,7 +171,7 @@ bool sfc_header_cartridge_type(struct sfc_header const * const header, struct sf
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     struct sfc_cartridge_type output = {
         false,
         false,
@@ -241,7 +241,7 @@ bool sfc_header_set_cartridge_type(struct sfc_header * const header, struct sfc_
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     int8_t const new_id = cartridge_type_id(cartridge_type);
     if (new_id == -1)
         return false;
@@ -264,7 +264,7 @@ bool sfc_header_set_rom_size(struct sfc_header * const header, uint32_t const si
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     uint32_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
@@ -284,7 +284,7 @@ bool sfc_header_set_ram_size(struct sfc_header * const header, uint32_t const si
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     size_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
@@ -362,7 +362,7 @@ bool sfc_header_set_destination_code(struct sfc_header * const header, enum sfc_
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     uint8_t value;
     switch (destination_code)
     {
@@ -437,7 +437,7 @@ uint8_t sfc_header_developer_id(struct sfc_header const * const header) {
 void sfc_header_set_developer_id(struct sfc_header * const header, uint8_t const developer_id) {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     SFC_HEADER_DEVELOPER_ID(data) = developer_id;
 }
 
@@ -451,7 +451,7 @@ uint8_t sfc_header_version(struct sfc_header const * const header) {
 void sfc_header_set_version(struct sfc_header * const header, uint8_t const version) {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     SFC_HEADER_VERSION(data) = version;
 }
 
@@ -465,6 +465,6 @@ uint16_t sfc_header_checksum(struct sfc_header const * const header) {
 void sfc_header_set_checksum(struct sfc_header * const header, uint16_t const checksum) {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * restrict data = header->data;
+    void * const restrict data = header->data;
     SFC_HEADER_CHECKSUM(data) = checksum;
 }
