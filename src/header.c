@@ -43,15 +43,32 @@
 #define SFC_HEADER_VERSION_OFFSET 0xDB
 #define SFC_HEADER_CHECKSUM_OFFSET 0xDE
 
-#define SFC_HEADER_TITLE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_TITLE_OFFSET))
-#define SFC_HEADER_MAP_MODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_MAP_MODE_OFFSET))
-#define SFC_HEADER_CARTRIDGE_TYPE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_CARTRIDGE_TYPE_OFFSET))
-#define SFC_HEADER_ROM_SIZE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_ROM_SIZE_OFFSET))
-#define SFC_HEADER_RAM_SIZE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_RAM_SIZE_OFFSET))
-#define SFC_HEADER_DESTINATION_CODE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DESTINATION_CODE_OFFSET))
-#define SFC_HEADER_DEVELOPER_ID(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_DEVELOPER_ID_OFFSET))
-#define SFC_HEADER_VERSION(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_VERSION_OFFSET))
-#define SFC_HEADER_CHECKSUM(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
+#define SFC_HEADER_TITLE_READ(x) ((char const*) OFFSET_POINTER_READ(x, SFC_HEADER_TITLE_OFFSET))
+#define SFC_HEADER_TITLE_WRITE(x) ((char*) OFFSET_POINTER_WRITE(x, SFC_HEADER_TITLE_OFFSET))
+
+#define SFC_HEADER_MAP_MODE_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_MAP_MODE_OFFSET))
+#define SFC_HEADER_MAP_MODE_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_MAP_MODE_OFFSET))
+
+#define SFC_HEADER_CARTRIDGE_TYPE_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_CARTRIDGE_TYPE_OFFSET))
+#define SFC_HEADER_CARTRIDGE_TYPE_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_CARTRIDGE_TYPE_OFFSET))
+
+#define SFC_HEADER_ROM_SIZE_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_ROM_SIZE_OFFSET))
+#define SFC_HEADER_ROM_SIZE_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_ROM_SIZE_OFFSET))
+
+#define SFC_HEADER_RAM_SIZE_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_RAM_SIZE_OFFSET))
+#define SFC_HEADER_RAM_SIZE_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_RAM_SIZE_OFFSET))
+
+#define SFC_HEADER_DESTINATION_CODE_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_DESTINATION_CODE_OFFSET))
+#define SFC_HEADER_DESTINATION_CODE_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_DESTINATION_CODE_OFFSET))
+
+#define SFC_HEADER_DEVELOPER_ID_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_DEVELOPER_ID_OFFSET))
+#define SFC_HEADER_DEVELOPER_ID_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_DEVELOPER_ID_OFFSET))
+
+#define SFC_HEADER_VERSION_READ(x) (*(uint8_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_VERSION_OFFSET))
+#define SFC_HEADER_VERSION_WRITE(x) (*(uint8_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_VERSION_OFFSET))
+
+#define SFC_HEADER_CHECKSUM_READ(x) (*(uint16_t const*) OFFSET_POINTER_READ(x, SFC_HEADER_CHECKSUM_OFFSET))
+#define SFC_HEADER_CHECKSUM_WRITE(x) (*(uint16_t*) OFFSET_POINTER_WRITE(x, SFC_HEADER_CHECKSUM_OFFSET))
 
 
 static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
@@ -67,7 +84,7 @@ static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 
 bool sfc_extended_header_available(void const * header_data) {
     assert(header_data != NULL);
-    return SFC_HEADER_DEVELOPER_ID(header_data) == SFC_EXTENDED_HEADER_AVAILABLE;
+    return SFC_HEADER_DEVELOPER_ID_READ(header_data) == SFC_EXTENDED_HEADER_AVAILABLE;
 }
 
 char *sfc_header_title(struct sfc_header const * const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
@@ -75,14 +92,14 @@ char *sfc_header_title(struct sfc_header const * const header, char title[SFC_HE
     assert(header != NULL);
     assert(header->data != NULL);
     assert(title != NULL);
-    void const * restrict data = header->data;
-    size_t const size = find_title_size(SFC_HEADER_TITLE(data));
-    memcpy(title, SFC_HEADER_TITLE(data), size);
+    void const * const restrict data = header->data;
+    size_t const size = find_title_size(SFC_HEADER_TITLE_READ(data));
+    memcpy(title, SFC_HEADER_TITLE_READ(data), size);
     title[size] = '\0';
     return title;
 }
 
-bool sfc_header_set_title(struct sfc_header * const header, char title[])
+bool sfc_header_set_title(struct sfc_header const * const header, char title[])
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -96,8 +113,8 @@ bool sfc_header_set_title(struct sfc_header * const header, char title[])
         if (!(title[i] == ' ' || (title[i] >= 'A' && title[i] <= 'Z')))
             return false;
     }
-    memcpy(SFC_HEADER_TITLE(data), title, size);
-    memset(SFC_HEADER_TITLE(data) + size, ' ', SFC_HEADER_TITLE_MAX_SIZE - size);
+    memcpy(SFC_HEADER_TITLE_WRITE(data), title, size);
+    memset(SFC_HEADER_TITLE_WRITE(data) + size, ' ', SFC_HEADER_TITLE_MAX_SIZE - size);
     return true;
 }
 
@@ -105,28 +122,28 @@ enum sfc_speed sfc_header_speed(struct sfc_header const * const header)
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    return (SFC_HEADER_MAP_MODE(data) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
+    void const * const restrict data = header->data;
+    return (SFC_HEADER_MAP_MODE_READ(data) & 0x10) > 0 ? SFC_FAST : SFC_SLOW;
 }
 
-void sfc_header_set_speed(struct sfc_header * const header, enum sfc_speed const speed)
+void sfc_header_set_speed(struct sfc_header const * const header, enum sfc_speed const speed)
 {
     assert(header != NULL);
     assert(header->data != NULL);
     void * const restrict data = header->data;
     uint8_t const value = speed == SFC_FAST ? 1 : 0;
-    uint8_t mode = SFC_HEADER_MAP_MODE(data);
+    uint8_t mode = SFC_HEADER_MAP_MODE_WRITE(data);
     mode &= ~0x10;
     mode |= value << 4;
-    SFC_HEADER_MAP_MODE(data) = mode;
+    SFC_HEADER_MAP_MODE_WRITE(data) = mode;
 }
 
 bool sfc_header_map(struct sfc_header const * const header, enum sfc_map * const map)
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    switch (SFC_HEADER_MAP_MODE(data) & 0xF)
+    void const * const restrict data = header->data;
+    switch (SFC_HEADER_MAP_MODE_READ(data) & 0xF)
     {
     case 0:
         *map = SFC_MAP_LO;
@@ -142,12 +159,12 @@ bool sfc_header_map(struct sfc_header const * const header, enum sfc_map * const
     }
 }
 
-bool sfc_header_set_map(struct sfc_header * const header, enum sfc_map const map)
+bool sfc_header_set_map(struct sfc_header const * const header, enum sfc_map const map)
 {
     assert(header != NULL);
     assert(header->data != NULL);
     void * const restrict data = header->data;
-    uint8_t mode = SFC_HEADER_MAP_MODE(data);
+    uint8_t mode = SFC_HEADER_MAP_MODE_WRITE(data);
     mode &= ~0xF;
     switch (map)
     {
@@ -163,7 +180,7 @@ bool sfc_header_set_map(struct sfc_header * const header, enum sfc_map const map
     default:
         return false;
     }
-    SFC_HEADER_MAP_MODE(data) = mode;
+    SFC_HEADER_MAP_MODE_WRITE(data) = mode;
     return true;
 }
 
@@ -177,7 +194,7 @@ bool sfc_header_cartridge_type(struct sfc_header const * const header, struct sf
         false,
         false
     };
-    switch (SFC_HEADER_CARTRIDGE_TYPE(data) & 0xF)
+    switch (SFC_HEADER_CARTRIDGE_TYPE_READ(data) & 0xF)
     {
     case 0:
         break;
@@ -237,7 +254,7 @@ static int_least8_t cartridge_type_id(struct sfc_cartridge_type const cartridge_
     return 6;
 }
 
-bool sfc_header_set_cartridge_type(struct sfc_header * const header, struct sfc_cartridge_type const cartridge_type)
+bool sfc_header_set_cartridge_type(struct sfc_header const * const header, struct sfc_cartridge_type const cartridge_type)
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -245,10 +262,10 @@ bool sfc_header_set_cartridge_type(struct sfc_header * const header, struct sfc_
     int8_t const new_id = cartridge_type_id(cartridge_type);
     if (new_id == -1)
         return false;
-    uint8_t id = SFC_HEADER_CARTRIDGE_TYPE(data);
+    uint8_t id = SFC_HEADER_CARTRIDGE_TYPE_WRITE(data);
     id &= ~0xF;
     id |= (new_id & 0xF);
-    SFC_HEADER_CARTRIDGE_TYPE(data) = id;
+    SFC_HEADER_CARTRIDGE_TYPE_WRITE(data) = id;
     return true;
 }
 
@@ -256,11 +273,11 @@ uint32_t sfc_header_rom_size(struct sfc_header const * const header)
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    return 1 << SFC_HEADER_ROM_SIZE(data);
+    void const * const restrict data = header->data;
+    return 1 << SFC_HEADER_ROM_SIZE_READ(data);
 }
 
-bool sfc_header_set_rom_size(struct sfc_header * const header, uint32_t const size)
+bool sfc_header_set_rom_size(struct sfc_header const * const header, uint32_t const size)
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -268,7 +285,7 @@ bool sfc_header_set_rom_size(struct sfc_header * const header, uint32_t const si
     uint32_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
-    SFC_HEADER_ROM_SIZE(data) = (uint8_t) value;
+    SFC_HEADER_ROM_SIZE_WRITE(data) = (uint8_t) value;
     return true;
 }
 
@@ -276,11 +293,11 @@ uint32_t sfc_header_ram_size(struct sfc_header const * const header)
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    return 1 << SFC_HEADER_RAM_SIZE(data);
+    void const * const restrict data = header->data;
+    return 1 << SFC_HEADER_RAM_SIZE_READ(data);
 }
 
-bool sfc_header_set_ram_size(struct sfc_header * const header, uint32_t const size)
+bool sfc_header_set_ram_size(struct sfc_header const * const header, uint32_t const size)
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -288,7 +305,7 @@ bool sfc_header_set_ram_size(struct sfc_header * const header, uint32_t const si
     size_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
-    SFC_HEADER_RAM_SIZE(data) = (uint8_t) value;
+    SFC_HEADER_RAM_SIZE_WRITE(data) = (uint8_t) value;
     return true;
 }
 
@@ -296,8 +313,8 @@ bool sfc_header_destination_code(struct sfc_header const * const header, enum sf
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    switch (SFC_HEADER_DESTINATION_CODE(data))
+    void const * const restrict data = header->data;
+    switch (SFC_HEADER_DESTINATION_CODE_READ(data))
     {
     case 0:
         *destination_code = SFC_DESTINATION_JAPAN;
@@ -358,7 +375,7 @@ bool sfc_header_destination_code(struct sfc_header const * const header, enum sf
     }
 }
 
-bool sfc_header_set_destination_code(struct sfc_header * const header, enum sfc_destination_code const destination_code)
+bool sfc_header_set_destination_code(struct sfc_header const * const header, enum sfc_destination_code const destination_code)
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -423,48 +440,48 @@ bool sfc_header_set_destination_code(struct sfc_header * const header, enum sfc_
     default:
         return false;
     }
-    SFC_HEADER_DESTINATION_CODE(data) = value;
+    SFC_HEADER_DESTINATION_CODE_WRITE(data) = value;
     return true;
 }
 
 uint8_t sfc_header_developer_id(struct sfc_header const * const header) {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    return SFC_HEADER_DEVELOPER_ID(data);
+    void const * const restrict data = header->data;
+    return SFC_HEADER_DEVELOPER_ID_READ(data);
 }
 
-void sfc_header_set_developer_id(struct sfc_header * const header, uint8_t const developer_id) {
+void sfc_header_set_developer_id(struct sfc_header const * const header, uint8_t const developer_id) {
     assert(header != NULL);
     assert(header->data != NULL);
     void * const restrict data = header->data;
-    SFC_HEADER_DEVELOPER_ID(data) = developer_id;
+    SFC_HEADER_DEVELOPER_ID_WRITE(data) = developer_id;
 }
 
 uint8_t sfc_header_version(struct sfc_header const * const header) {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    return SFC_HEADER_VERSION(data);
+    void const * const restrict data = header->data;
+    return SFC_HEADER_VERSION_READ(data);
 }
 
-void sfc_header_set_version(struct sfc_header * const header, uint8_t const version) {
+void sfc_header_set_version(struct sfc_header const * const header, uint8_t const version) {
     assert(header != NULL);
     assert(header->data != NULL);
     void * const restrict data = header->data;
-    SFC_HEADER_VERSION(data) = version;
+    SFC_HEADER_VERSION_WRITE(data) = version;
 }
 
 uint16_t sfc_header_checksum(struct sfc_header const * const header) {
     assert(header != NULL);
     assert(header->data != NULL);
-    void const * restrict data = header->data;
-    return SFC_HEADER_CHECKSUM(data);
+    void const * const restrict data = header->data;
+    return SFC_HEADER_CHECKSUM_READ(data);
 }
 
-void sfc_header_set_checksum(struct sfc_header * const header, uint16_t const checksum) {
+void sfc_header_set_checksum(struct sfc_header const * const header, uint16_t const checksum) {
     assert(header != NULL);
     assert(header->data != NULL);
     void * const restrict data = header->data;
-    SFC_HEADER_CHECKSUM(data) = checksum;
+    SFC_HEADER_CHECKSUM_WRITE(data) = checksum;
 }

@@ -26,6 +26,7 @@
 #ifndef _SFC_OFFSET_H
 #define _SFC_OFFSET_H
 
-#define OFFSET_POINTER(ptr, offset) ((void*) (((char*)(ptr)) + (offset)))
+#define OFFSET_POINTER_WRITE(ptr, offset) ((void*) (((char*)(ptr)) + (offset)))
+#define OFFSET_POINTER_READ(ptr, offset) ((void const*) (((char const*)(ptr)) + (offset)))
 
 #endif
