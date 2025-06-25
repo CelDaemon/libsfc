@@ -60,7 +60,7 @@ int main(int const argc, char const * const argv[])
     }
     printf("Data: %p, Size: %zu\n", rom->data, rom->size);
     printf("Calculated checksum: %hX\n", sfc_checksum(rom));
-    struct sfc_header * const header = sfc_rom_header(rom);
+    struct sfc_header const * const header = sfc_rom_header(rom);
     printf("Header: %p\n", header->data);
     if (!sfc_header_set_title(header, "MEOW A"))
     {

@@ -92,7 +92,7 @@ struct sfc_rom
 
 struct sfc_rom *sfc_create_rom(void const *input_data, size_t size, bool const *copier, enum sfc_map const *map);
 void sfc_destroy_rom(struct sfc_rom *rom);
-struct sfc_header *sfc_rom_header(struct sfc_rom *rom);
+struct sfc_header const *sfc_rom_header(struct sfc_rom const *rom);
 
 char *sfc_header_title(struct sfc_header const *header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
 bool sfc_header_set_title(struct sfc_header const *header, char title[]);

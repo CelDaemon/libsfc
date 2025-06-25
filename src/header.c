@@ -112,7 +112,7 @@ bool sfc_header_set_title(struct sfc_header const * const header, char title[])
         return false;
     for (size_t i = 0; i < size; i++)
     {
-        if (!(title[i] == ' ' || (title[i] >= 'A' && title[i] <= 'Z')))
+        if (title[i] < ' ' || title[i] > '~')
             return false;
     }
     memcpy(SFC_HEADER_TITLE(data), title, size);
