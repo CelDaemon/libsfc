@@ -45,6 +45,7 @@
 
 #define SFC_HEADER_MAKER_CODE_OFFSET 0xB0
 #define SFC_HEADER_GAME_CODE_OFFSET 0xB2
+#define SFC_HEADER_EXPANSION_RAM_SIZE_OFFSET 0xBD
 
 
 
@@ -75,11 +76,16 @@
 #define SFC_HEADER_CHECKSUM_CONST(x) (*(uint16_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_CHECKSUM_OFFSET))
 #define SFC_HEADER_CHECKSUM(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
 
+
 #define SFC_HEADER_MAKER_CODE_CONST(x) ((char const*) OFFSET_POINTER_CONST(x, SFC_HEADER_MAKER_CODE_OFFSET))
 #define SFC_HEADER_MAKER_CODE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_MAKER_CODE_OFFSET))
 
 #define SFC_HEADER_GAME_CODE_CONST(x) ((char const*) OFFSET_POINTER_CONST(x, SFC_HEADER_GAME_CODE_OFFSET))
 #define SFC_HEADER_GAME_CODE(x) ((char*) OFFSET_POINTER(x, SFC_HEADER_GAME_CODE_OFFSET))
+
+#define SFC_HEADER_EXPANSION_RAM_SIZE_CONST(x) (*(uint8_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_EXPANSION_RAM_SIZE_OFFSET))
+#define SFC_HEADER_EXPANSION_RAM_SIZE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_EXPANSION_RAM_SIZE_OFFSET))
+
 
 #define SFC_EXTENDED_HEADER_AVAILABLE 33
 
@@ -318,7 +324,7 @@ bool sfc_header_set_ram_size(struct sfc_header const * const header, uint32_t co
     assert(header != NULL);
     assert(header->data != NULL);
     void * const restrict data = header->data;
-    size_t const value = find_last_set(size);
+    uint32_t const value = find_last_set(size);
     if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_RAM_SIZE(data) = (uint8_t) value;
@@ -559,5 +565,28 @@ bool sfc_header_set_game_code(struct sfc_header const * const header, char game_
     }
     memcpy(SFC_HEADER_GAME_CODE(data), game_code, size);
     memset(SFC_HEADER_GAME_CODE(data) + size, ' ', SFC_HEADER_GAME_CODE_SIZE - size);
+    return true;
+}
+
+bool sfc_header_expansion_ram_size(struct sfc_header const * const header, uint32_t *size) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    if (!header->has_extended)
+        return false;
+    void const * const restrict data = header->data;
+    *size =  1 << SFC_HEADER_EXPANSION_RAM_SIZE_CONST(data);
+    return true;
+}
+
+bool sfc_header_set_expansion_ram_size(struct sfc_header const * const header, uint32_t const size) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    if (!header->has_extended)
+        return false;
+    void * const restrict data = header->data;
+    uint32_t const value = find_last_set(size);
+    if ((size & ~(1 << value)) != 0)
+        return false;
+    SFC_HEADER_EXPANSION_RAM_SIZE(data) = (uint8_t) value;
     return true;
 }

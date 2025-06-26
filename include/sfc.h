@@ -136,6 +136,9 @@ bool sfc_header_set_maker_code(struct sfc_header const *header, char const maker
 bool sfc_header_game_code(struct sfc_header const *header, char game_code[SFC_HEADER_GAME_CODE_SIZE + 1]);
 bool sfc_header_set_game_code(struct sfc_header const *header, char game_code[]);
 
+bool sfc_header_expansion_ram_size(struct sfc_header const *header, uint32_t *size);
+bool sfc_header_set_expansion_ram_size(struct sfc_header const *header, uint32_t size);
+
 uint16_t sfc_checksum(struct sfc_rom const *rom);
 
 #endif

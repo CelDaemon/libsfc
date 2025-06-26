@@ -51,7 +51,7 @@ int main(int const argc, char const * const argv[])
         return 2;
     }
     fclose(file);
-    enum sfc_map load_map = SFC_MAP_LO;
+    enum sfc_map const load_map = SFC_MAP_LO;
     struct sfc_rom * const rom = sfc_create_rom(data, stat.st_size, NULL, &load_map);
     free(data);
     if (rom == NULL)
@@ -170,6 +170,18 @@ int main(int const argc, char const * const argv[])
             return 1;
         }
         printf("Game code: %s", game_code);
+        if (!sfc_header_set_expansion_ram_size(header, 1024)) {
+            fprintf(stderr, "Failed to set expansion ram size\n");
+            sfc_destroy_rom(rom);
+            return 1;
+        }
+        uint32_t expansion_ram_size;
+        if (!sfc_header_expansion_ram_size(header, &expansion_ram_size)) {
+            fprintf(stderr, "Failed to get expansion ram size\n");
+            sfc_destroy_rom(rom);
+            return 1;
+        }
+        printf("Expansion ram size: %u\n", expansion_ram_size);
     }
     sfc_destroy_rom(rom);
     return 0;
