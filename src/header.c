@@ -42,6 +42,7 @@
 #define SFC_HEADER_DEVELOPER_ID_OFFSET 0xDA
 #define SFC_HEADER_VERSION_OFFSET 0xDB
 #define SFC_HEADER_CHECKSUM_OFFSET 0xDE
+#define SFC_HEADER_CHECKSUM_COMPLEMENT_OFFSET 0xDC
 
 #define SFC_HEADER_MAKER_CODE_OFFSET 0xB0
 #define SFC_HEADER_GAME_CODE_OFFSET 0xB2
@@ -77,6 +78,9 @@
 
 #define SFC_HEADER_CHECKSUM_CONST(x) (*(uint16_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_CHECKSUM_OFFSET))
 #define SFC_HEADER_CHECKSUM(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_OFFSET))
+
+#define SFC_HEADER_CHECKSUM_COMPLEMENT_CONST(x) (*(uint16_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_CHECKSUM_COMPLEMENT_OFFSET))
+#define SFC_HEADER_CHECKSUM_COMPLEMENT(x) (*(uint16_t*) OFFSET_POINTER(x, SFC_HEADER_CHECKSUM_COMPLEMENT_OFFSET))
 
 
 #define SFC_HEADER_MAKER_CODE_CONST(x) ((char const*) OFFSET_POINTER_CONST(x, SFC_HEADER_MAKER_CODE_OFFSET))
@@ -513,6 +517,7 @@ void sfc_header_set_checksum(struct sfc_header const * const header, uint16_t co
     assert(header->data != NULL);
     void * const restrict data = header->data;
     SFC_HEADER_CHECKSUM(data) = checksum;
+    SFC_HEADER_CHECKSUM_COMPLEMENT(data) = ~checksum;
 }
 
 bool sfc_header_maker_code(struct sfc_header const * const header, char maker_code[SFC_HEADER_MAKER_CODE_SIZE + 1]) {
