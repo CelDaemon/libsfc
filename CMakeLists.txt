@@ -25,10 +25,12 @@ add_library(sfc STATIC
         src/offset.h
         src/find_last_set.h
         src/checksum.c
+        mangle/main.c
 )
 target_include_directories(sfc PUBLIC include/)
 
 add_subdirectory(example)
 add_subdirectory(verify)
+add_subdirectory(mangle)
 
 install(TARGETS sfc example verify)

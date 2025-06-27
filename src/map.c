@@ -59,7 +59,7 @@ bool sfc_introspect_copier(size_t const size)
 bool sfc_header_available(enum sfc_map const map, size_t const size)
 {
     const size_t offset = sfc_header_offset(map);
-    return offset + SFC_HEADER_SIZE < size;
+    return offset + 0xFF < size;
 }
 
 enum sfc_map sfc_introspect_map(void const * const data, size_t const size)

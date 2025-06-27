@@ -28,8 +28,6 @@
 
 #include <stdbool.h>
 
-#define SFC_HEADER_SIZE 32
-
 bool sfc_extended_header_available(void const * header_data);
 
 #endif
