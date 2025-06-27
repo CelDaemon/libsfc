@@ -46,6 +46,8 @@
 #define SFC_HEADER_MAKER_CODE_OFFSET 0xB0
 #define SFC_HEADER_GAME_CODE_OFFSET 0xB2
 #define SFC_HEADER_EXPANSION_RAM_SIZE_OFFSET 0xBD
+#define SFC_HEADER_SPECIAL_VERSION_OFFSET 0xBE
+#define SFC_HEADER_CARTRIDGE_SUBTYPE_OFFSET 0xBF
 
 
 
@@ -86,15 +88,20 @@
 #define SFC_HEADER_EXPANSION_RAM_SIZE_CONST(x) (*(uint8_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_EXPANSION_RAM_SIZE_OFFSET))
 #define SFC_HEADER_EXPANSION_RAM_SIZE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_EXPANSION_RAM_SIZE_OFFSET))
 
+#define SFC_HEADER_SPECIAL_VERSION_CONST(x) (*(uint8_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_SPECIAL_VERSION_OFFSET))
+#define SFC_HEADER_SPECIAL_VERSION(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_SPECIAL_VERSION_OFFSET))
+
+#define SFC_HEADER_CARTRIDGE_SUBTYPE_CONST(x) (*(uint8_t const*) OFFSET_POINTER_CONST(x, SFC_HEADER_CARTRIDGE_SUBTYPE_OFFSET))
+#define SFC_HEADER_CARTRIDGE_SUBTYPE(x) (*(uint8_t*) OFFSET_POINTER(x, SFC_HEADER_CARTRIDGE_SUBTYPE_OFFSET))
 
 #define SFC_EXTENDED_HEADER_AVAILABLE 33
 
 
-static size_t find_padded_string_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1], size_t const max_size)
+static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
-    for (size_t i = 0; i < max_size; i++)
+    for (size_t i = 0; i < SFC_HEADER_TITLE_MAX_SIZE; i++)
     {
-        size_t const length = max_size - i;
+        size_t const length = SFC_HEADER_TITLE_MAX_SIZE - i;
         if (title[length - 1] != ' ')
             return length;
     }
@@ -116,7 +123,7 @@ void sfc_header_title(struct sfc_header const * const header, char title[SFC_HEA
     assert(header->data != NULL);
     assert(title != NULL);
     void const * const restrict data = header->data;
-    size_t const size = find_padded_string_size(SFC_HEADER_TITLE_CONST(data), SFC_HEADER_TITLE_MAX_SIZE);
+    size_t const size = find_title_size(SFC_HEADER_TITLE_CONST(data));
     memcpy(title, SFC_HEADER_TITLE_CONST(data), size);
     title[size] = '\0';
 }
@@ -210,7 +217,7 @@ bool sfc_header_cartridge_type(struct sfc_header const * const header, struct sf
 {
     assert(header != NULL);
     assert(header->data != NULL);
-    void * const restrict data = header->data;
+    void const * const restrict data = header->data;
     struct sfc_cartridge_type output = {
         false,
         false,
@@ -542,7 +549,7 @@ bool sfc_header_game_code(struct sfc_header const * const header, char game_code
     if (!header->has_extended)
         return false;
     void const * const restrict data = header->data;
-    size_t const size = find_padded_string_size(SFC_HEADER_GAME_CODE_CONST(data), SFC_HEADER_GAME_CODE_SIZE);
+    size_t const size = SFC_HEADER_GAME_CODE_CONST(data)[2] != ' ' ? 4 : 2;
     memcpy(game_code, SFC_HEADER_GAME_CODE_CONST(data), size);
     game_code[size] = '\0';
     return true;
@@ -588,5 +595,45 @@ bool sfc_header_set_expansion_ram_size(struct sfc_header const * const header, u
     if ((size & ~(1 << value)) != 0)
         return false;
     SFC_HEADER_EXPANSION_RAM_SIZE(data) = (uint8_t) value;
+    return true;
+}
+
+bool sfc_header_special_version(struct sfc_header const * const header, uint8_t * const version) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    if (!header->has_extended)
+        return false;
+    void const * const restrict data = header->data;
+    *version = SFC_HEADER_SPECIAL_VERSION_CONST(data);
+    return true;
+}
+
+bool sfc_header_set_special_version(struct sfc_header const * const header, uint8_t const version) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    if (!header->has_extended)
+        return false;
+    void * const restrict data = header->data;
+    SFC_HEADER_SPECIAL_VERSION(data) = version;
+    return true;
+}
+
+bool sfc_header_cartridge_subtype(struct sfc_header const * const header, uint8_t * const type) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    if (!header->has_extended)
+        return false;
+    void const * const restrict data = header->data;
+    *type = SFC_HEADER_CARTRIDGE_SUBTYPE_CONST(data);
+    return true;
+}
+
+bool sfc_header_set_cartridge_subtype(struct sfc_header const * const header, uint8_t const type) {
+    assert(header != NULL);
+    assert(header->data != NULL);
+    if (!header->has_extended)
+        return false;
+    void * const restrict data = header->data;
+    SFC_HEADER_CARTRIDGE_SUBTYPE(data) = type;
     return true;
 }

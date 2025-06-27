@@ -139,6 +139,13 @@ bool sfc_header_set_game_code(struct sfc_header const *header, char game_code[])
 bool sfc_header_expansion_ram_size(struct sfc_header const *header, uint32_t *size);
 bool sfc_header_set_expansion_ram_size(struct sfc_header const *header, uint32_t size);
 
+bool sfc_header_special_version(struct sfc_header const *header, uint8_t *version);
+bool sfc_header_set_special_version(struct sfc_header const *header, uint8_t version);
+
+bool sfc_header_cartridge_subtype(struct sfc_header const *header, uint8_t *type);
+bool sfc_header_set_cartridge_subtype(struct sfc_header const *header, uint8_t type);
+
+
 uint16_t sfc_checksum(struct sfc_rom const *rom);
 
 #endif
