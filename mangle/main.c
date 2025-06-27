@@ -48,7 +48,7 @@ static struct sfc_rom *load_rom(char const *path) {
     void * data = malloc(stat.st_size);
     if (fread(data, stat.st_size, 1, file) != 1)
     {
-        fprintf(stderr, "Failed to read ROM file\n");
+        perror("Failed to read the input ROM file");
         fclose(file);
         free(data);
         return NULL;
@@ -66,7 +66,8 @@ static void mangle_rom(struct sfc_rom const * const rom) {
     char header_backup[0xFF];
     memcpy(header_backup, header->data, 0xFF);
     for (size_t i = 0; i < rom->memory_size; i += sizeof(text)) {
-        memcpy(OFFSET_POINTER(rom->memory, i), text, sizeof(text) > rom->memory_size - i ? rom->memory_size - i : sizeof(text));
+        memcpy(OFFSET_POINTER(rom->memory, i), text,
+            sizeof(text) > rom->memory_size - i ? rom->memory_size - i : sizeof(text));
     }
     memcpy(header->data, header_backup, 0xFF);
     sfc_header_set_checksum(header, sfc_checksum(rom));
@@ -74,16 +75,20 @@ static void mangle_rom(struct sfc_rom const * const rom) {
 
 static bool write_rom(struct sfc_rom const * const rom, char const *file) {
     FILE * const output_file = fopen(file, "w");
-    if (output_file == NULL)
+    if (output_file == NULL) {
+        perror("Failed to create the output ROM file");
         return false;
+    }
     fwrite(rom->data, rom->size, 1, output_file);
     fclose(output_file);
     return true;
 }
 
 int main(int const argc, char const * const argv[]) {
-    if (argc < 3)
+    if (argc < 3) {
+        fputs("No arguments specified: mangle <input> <output>\n", stderr);
         return 1;
+    }
     struct sfc_rom const * const rom = load_rom(argv[1]);
     if (rom == NULL)
         return 1;
