@@ -91,3 +91,10 @@ struct sfc_header const *sfc_rom_header(struct sfc_rom const * const rom)
     assert(rom != NULL);
     return &rom->header;
 }
+
+void const *sfc_rom_data(struct sfc_rom const * const rom, size_t * const size) {
+    assert(rom != NULL);
+    assert(size != NULL);
+    *size = rom->size;
+    return rom->data;
+}

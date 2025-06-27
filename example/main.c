@@ -35,7 +35,7 @@
 
 int main(int const argc, char const * const argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
         return 1;
     FILE * const file = fopen(argv[1], "r");
     if (file == NULL)
@@ -122,73 +122,14 @@ int main(int const argc, char const * const argv[])
         goto error;
     }
 
-    enum sfc_destination_code destination_code;
-    if (!sfc_header_destination_code(header, &destination_code))
-    {
-        fprintf(stderr, "Failed to get destination code\n");
+    FILE * const output_file = fopen(argv[2], "w");
+    if (output_file == NULL) {
+        perror("meow");
+        fprintf(stderr, "Failed to open output file\n");
         goto error;
-    };
-    printf("Destination code: %d\n", destination_code);
-    sfc_header_set_developer_id(header, 33);
-    printf("Developer ID: %u\n", sfc_header_developer_id(header));
-    sfc_header_set_version(header, 10);
-    printf("Version: %u\n", sfc_header_version(header));
-    printf("Checksum: %hX\n", sfc_header_checksum(header));
-
-    if (sfc_header_extended_available(header)) {
-        printf("Has extended header!\n");
-        if (!sfc_header_set_maker_code(header, "AB")) {
-            fprintf(stderr, "Failed to set maker code\n");
-            goto error;
-        };
-        char maker_code[SFC_HEADER_MAKER_CODE_SIZE + 1];
-        if (!sfc_header_maker_code(header, maker_code)) {
-            fprintf(stderr, "Failed to get maker code\n");
-            goto error;
-        }
-        printf("Maker code: %s", maker_code);
-        if (!sfc_header_set_game_code(header, "ABBB")) {
-            fprintf(stderr, "Failed to set game code\n");
-            goto error;
-        }
-        char game_code[SFC_HEADER_GAME_CODE_SIZE + 1];
-        if (!sfc_header_game_code(header, game_code)) {
-            fprintf(stderr, "Failed to get game code\n");
-            goto error;
-        }
-        printf("Game code: %s", game_code);
-        if (!sfc_header_set_expansion_ram_size(header, 1024)) {
-            fprintf(stderr, "Failed to set expansion ram size\n");
-            goto error;
-        }
-        uint32_t expansion_ram_size;
-        if (!sfc_header_expansion_ram_size(header, &expansion_ram_size)) {
-            fprintf(stderr, "Failed to get expansion ram size\n");
-            goto error;
-        }
-        printf("Expansion ram size: %u\n", expansion_ram_size);
-
-        if (!sfc_header_set_special_version(header, 100)) {
-            fprintf(stderr, "Failed to set special version\n");
-            goto error;
-        }
-        uint8_t special_version;
-        if (!sfc_header_special_version(header, &special_version)) {
-            fprintf(stderr, "Failed to get special version\n");
-            goto error;
-        }
-        printf("Special version: %u\n", special_version);
-        if (!sfc_header_set_cartridge_subtype(header, 10)) {
-            fprintf(stderr, "Failed to set cartridge subtype\n");
-            goto error;
-        }
-        uint8_t cartridge_subtype;
-        if (!sfc_header_cartridge_subtype(header, &cartridge_subtype)) {
-            fprintf(stderr, "Failed to get cartridge subtype\n");
-            goto error;
-        }
-        printf("Cartridge subtype: %u\n", cartridge_subtype);
     }
+    fwrite(rom->data, rom->size, 1, output_file);
+    fclose(output_file);
     sfc_destroy_rom(rom);
     return 0;
 error:

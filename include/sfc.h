@@ -96,6 +96,7 @@ struct sfc_rom
 struct sfc_rom *sfc_create_rom(void const *input_data, size_t size, bool const *copier, enum sfc_map const *map);
 void sfc_destroy_rom(struct sfc_rom *rom);
 struct sfc_header const *sfc_rom_header(struct sfc_rom const *rom);
+void const *sfc_rom_data(struct sfc_rom const *rom, size_t *size);
 
 bool sfc_header_extended_available(struct sfc_header const *header);
 
