@@ -59,11 +59,12 @@ static struct sfc_rom *load_rom(char const *path) {
     return rom;
 }
 
+static char const text[] = "THIS DUMMY ROM IS USED FOR TESTING LIBSFC, AND CANNOT BE EXECUTED!";
+
 static void mangle_rom(struct sfc_rom const * const rom) {
     struct sfc_header const * const header = sfc_rom_header(rom);
     char header_backup[0xFF];
     memcpy(header_backup, header->data, 0xFF);
-    char const text[] = "THIS DUMMY ROM IS USED FOR TESTING LIBSFC, AND CANNOT BE EXECUTED!";
     for (size_t i = 0; i < rom->memory_size; i += sizeof(text)) {
         memcpy(OFFSET_POINTER(rom->memory, i), text, sizeof(text) > rom->memory_size - i ? rom->memory_size - i : sizeof(text));
     }
