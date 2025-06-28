@@ -101,7 +101,7 @@ void const *sfc_rom_data(struct sfc_rom const *rom, size_t *size);
 bool sfc_header_extended_available(struct sfc_header const *header);
 
 void sfc_header_title(struct sfc_header const *header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1]);
-bool sfc_header_set_title(struct sfc_header const *header, char title[]);
+bool sfc_header_set_title(struct sfc_header const *header, char const title[]);
 
 enum sfc_speed sfc_header_speed(struct sfc_header const *header);
 void sfc_header_set_speed(struct sfc_header const *header, enum sfc_speed speed);
@@ -135,7 +135,7 @@ bool sfc_header_maker_code(struct sfc_header const *header, char maker_code[SFC_
 bool sfc_header_set_maker_code(struct sfc_header const *header, char const maker_code[]);
 
 bool sfc_header_game_code(struct sfc_header const *header, char game_code[SFC_HEADER_GAME_CODE_SIZE + 1]);
-bool sfc_header_set_game_code(struct sfc_header const *header, char game_code[]);
+bool sfc_header_set_game_code(struct sfc_header const *header, char const game_code[]);
 
 bool sfc_header_expansion_ram_size(struct sfc_header const *header, uint32_t *size);
 bool sfc_header_set_expansion_ram_size(struct sfc_header const *header, uint32_t size);

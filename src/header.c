@@ -101,7 +101,7 @@
 #define SFC_EXTENDED_HEADER_AVAILABLE 33
 
 
-static size_t find_title_size(char const title[SFC_HEADER_TITLE_MAX_SIZE + 1])
+static size_t find_title_size(char const title[const SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     for (size_t i = 0; i < SFC_HEADER_TITLE_MAX_SIZE; i++)
     {
@@ -121,7 +121,7 @@ bool sfc_header_extended_available(struct sfc_header const * const header) {
     return header->has_extended;
 }
 
-void sfc_header_title(struct sfc_header const * const header, char title[SFC_HEADER_TITLE_MAX_SIZE + 1])
+void sfc_header_title(struct sfc_header const * const header, char title[const SFC_HEADER_TITLE_MAX_SIZE + 1])
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -132,7 +132,7 @@ void sfc_header_title(struct sfc_header const * const header, char title[SFC_HEA
     title[size] = '\0';
 }
 
-bool sfc_header_set_title(struct sfc_header const * const header, char title[])
+bool sfc_header_set_title(struct sfc_header const * const header, char const title[const])
 {
     assert(header != NULL);
     assert(header->data != NULL);
@@ -520,7 +520,7 @@ void sfc_header_set_checksum(struct sfc_header const * const header, uint16_t co
     SFC_HEADER_CHECKSUM_COMPLEMENT(data) = ~checksum;
 }
 
-bool sfc_header_maker_code(struct sfc_header const * const header, char maker_code[SFC_HEADER_MAKER_CODE_SIZE + 1]) {
+bool sfc_header_maker_code(struct sfc_header const * const header, char maker_code[const SFC_HEADER_MAKER_CODE_SIZE + 1]) {
     assert(header != NULL);
     assert(header->data != NULL);
     assert(maker_code != NULL);
@@ -532,7 +532,7 @@ bool sfc_header_maker_code(struct sfc_header const * const header, char maker_co
     return true;
 }
 
-bool sfc_header_set_maker_code(struct sfc_header const * const header, char const maker_code[]) {
+bool sfc_header_set_maker_code(struct sfc_header const * const header, char const maker_code[const]) {
     assert(header != NULL);
     assert(header->data != NULL);
     assert(maker_code != NULL);
@@ -547,7 +547,7 @@ bool sfc_header_set_maker_code(struct sfc_header const * const header, char cons
     return true;
 }
 
-bool sfc_header_game_code(struct sfc_header const * const header, char game_code[SFC_HEADER_GAME_CODE_SIZE + 1]) {
+bool sfc_header_game_code(struct sfc_header const * const header, char game_code[const SFC_HEADER_GAME_CODE_SIZE + 1]) {
     assert(header != NULL);
     assert(header->data != NULL);
     assert(game_code != NULL);
@@ -560,7 +560,7 @@ bool sfc_header_game_code(struct sfc_header const * const header, char game_code
     return true;
 }
 
-bool sfc_header_set_game_code(struct sfc_header const * const header, char game_code[]) {
+bool sfc_header_set_game_code(struct sfc_header const * const header, char const game_code[const]) {
     assert(header != NULL);
     assert(header->data != NULL);
     assert(game_code != NULL);
