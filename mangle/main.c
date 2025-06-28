@@ -63,12 +63,19 @@ static char const text[] = "THIS DUMMY ROM IS USED FOR TESTING LIBSFC, AND CANNO
 
 static void mangle_rom(struct sfc_rom const * const rom) {
     struct sfc_header const * const header = sfc_rom_header(rom);
+    uint16_t const checksum = sfc_header_checksum(header);
+    srand(checksum);
     char header_backup[0xFF];
     memcpy(header_backup, header->data, 0xFF);
-    for (size_t i = 0; i < rom->memory_size; i += sizeof(text)) {
+    size_t const text_chunk_size = rom->memory_size < 1024 ? rom->memory_size : 1024;
+    for (size_t i = 0; i < text_chunk_size; i += sizeof(text)) {
         memcpy(OFFSET_POINTER(rom->memory, i), text,
-            sizeof(text) > rom->memory_size - i ? rom->memory_size - i : sizeof(text));
+            sizeof(text) > text_chunk_size - i ? text_chunk_size - i : sizeof(text));
     }
+    for (size_t i = text_chunk_size; i < rom->memory_size; i++) {
+        *((uint8_t*)OFFSET_POINTER(rom->memory, i)) = (uint8_t) rand();
+    }
+
     memcpy(header->data, header_backup, 0xFF);
     sfc_header_set_checksum(header, sfc_checksum(rom));
 }
