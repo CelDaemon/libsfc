@@ -23,7 +23,29 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-int main(void)
+#include <stdio.h>
+#include <string.h>
+
+#ifdef _MSC_VER
+#define PATH_SEPARATOR '\\'
+#else
+#define PATH_SEPARATOR '/'
+#endif
+
+char const *program_name(char const *path) {
+    if (path == NULL)
+        return "verify";
+    char const *name = strrchr(path, PATH_SEPARATOR);
+    if (name == NULL)
+        return path;
+    return name + 1;
+}
+
+int main(int const argc, char const *argv[])
 {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s [file]\n", program_name(argv[0]));
+        return 1;
+    }
     return 0;
 }
