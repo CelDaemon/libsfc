@@ -24,11 +24,66 @@
 */
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 
 #include "header.h"
 #include "map.h"
 #include "offset.h"
+
+#ifdef _MSC_VER
+#define fileno _fileno
+#endif
+
+struct sfc_rom *sfc_read_rom(char const * const path, bool const * const copier, enum sfc_map const * const map) {
+    assert(path != NULL);
+    FILE * const file = fopen(path, "r");
+    if (file == NULL)
+        return NULL;
+    struct stat stat;
+    if (fstat(fileno(file), &stat) != 0) {
+        fclose(file);
+        return NULL;
+    }
+
+    size_t capacity = stat.st_size;
+
+    void *data = malloc(capacity);
+    size_t written;
+    size_t cursor = 0;
+#define CHUNK_SIZE 1024
+    char buffer[CHUNK_SIZE];
+    do {
+        written = fread(buffer, 1, CHUNK_SIZE, file);
+        if (written > capacity - cursor) {
+            size_t const new_capacity = capacity * 2 > cursor + written ? capacity * 2 : cursor + written;
+            void * const new_data = realloc(data, new_capacity);
+            if (new_data == NULL) {
+                fclose(file);
+                free(data);
+                return NULL;
+            }
+            capacity = new_capacity;
+            data = new_data;
+        }
+        memcpy(OFFSET_POINTER(data, cursor), buffer, written);
+        cursor += written;
+    } while (written == CHUNK_SIZE);
+#undef CHUNK_SIZE
+    if (ferror(file) != 0) {
+        fclose(file);
+        free(data);
+        return NULL;
+    }
+    fclose(file);
+
+    struct sfc_rom * const rom = sfc_load_rom(data, cursor, copier, map);
+    if (rom == NULL)
+        free(data);
+    return rom;
+}
 
 struct sfc_rom *sfc_load_rom(void * const data, size_t const size, const bool * const copier, const enum sfc_map * const map)
 {

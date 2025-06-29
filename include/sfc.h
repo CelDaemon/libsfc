@@ -93,6 +93,7 @@ struct sfc_rom
 };
 
 
+struct sfc_rom *sfc_read_rom(char const *path, bool const *copier, enum sfc_map const *map);
 struct sfc_rom *sfc_load_rom(void *data, size_t size, bool const *copier, enum sfc_map const *map);
 void sfc_destroy_rom(struct sfc_rom *rom);
 struct sfc_header const *sfc_rom_header(struct sfc_rom const *rom);

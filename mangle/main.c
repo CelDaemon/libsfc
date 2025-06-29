@@ -33,33 +33,6 @@
 #include "../src/header.h"
 #include "../src/offset.h"
 
-#ifdef _MSC_VER
-#define fileno _fileno
-#endif
-
-
-static struct sfc_rom *load_rom(char const *path) {
-    assert(path != NULL);
-    FILE * const file = fopen(path, "r");
-    if (file == NULL)
-        return NULL;
-    struct stat stat;
-    fstat(fileno(file), &stat);
-    void * data = malloc(stat.st_size);
-    if (fread(data, stat.st_size, 1, file) != 1)
-    {
-        perror("Failed to read the input ROM file");
-        fclose(file);
-        free(data);
-        return NULL;
-    }
-    fclose(file);
-    struct sfc_rom * const rom = sfc_load_rom(data, stat.st_size, NULL, NULL);
-    if (rom == NULL)
-        free(data);
-    return rom;
-}
-
 static char const text[] = "THIS DUMMY ROM IS USED FOR TESTING LIBSFC, AND CANNOT BE EXECUTED!";
 
 static void mangle_rom(struct sfc_rom const * const rom) {
@@ -97,7 +70,7 @@ int main(int const argc, char const * const argv[]) {
         fputs("No arguments specified: mangle INPUT OUTPUT\n", stderr);
         return 1;
     }
-    struct sfc_rom const * const rom = load_rom(argv[1]);
+    struct sfc_rom const * const rom = sfc_read_rom(argv[1], NULL, NULL);
     if (rom == NULL)
         return 1;
     mangle_rom(rom);
