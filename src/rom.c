@@ -126,7 +126,6 @@ void sfc_destroy_rom(struct sfc_rom * const rom)
     if (rom == NULL)
         return;
     free(rom->data);
-    rom->data = NULL;
     free(rom);
 }
 
