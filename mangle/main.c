@@ -54,8 +54,9 @@ static struct sfc_rom *load_rom(char const *path) {
         return NULL;
     }
     fclose(file);
-    struct sfc_rom * const rom = sfc_create_rom(data, stat.st_size, NULL, NULL);
-    free(data);
+    struct sfc_rom * const rom = sfc_load_rom(data, stat.st_size, NULL, NULL);
+    if (rom == NULL)
+        free(data);
     return rom;
 }
 
@@ -93,7 +94,7 @@ static bool write_rom(struct sfc_rom const * const rom, char const *file) {
 
 int main(int const argc, char const * const argv[]) {
     if (argc < 3) {
-        fputs("No arguments specified: mangle <input> <output>\n", stderr);
+        fputs("No arguments specified: mangle INPUT OUTPUT\n", stderr);
         return 1;
     }
     struct sfc_rom const * const rom = load_rom(argv[1]);

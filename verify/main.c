@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "sfc.h"
+
 #ifdef _MSC_VER
 #define PATH_SEPARATOR '\\'
 #else
@@ -44,7 +46,7 @@ char const *program_name(char const *path) {
 int main(int const argc, char const *argv[])
 {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s [file]\n", program_name(argv[0]));
+        fprintf(stderr, "Usage: %s FILE\n", program_name(argv[0]));
         return 1;
     }
     return 0;

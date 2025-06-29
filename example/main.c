@@ -52,11 +52,11 @@ int main(int const argc, char const * const argv[])
     }
     fclose(file);
     enum sfc_map const load_map = SFC_MAP_LO;
-    struct sfc_rom * const rom = sfc_create_rom(data, stat.st_size, NULL, &load_map);
-    free(data);
+    struct sfc_rom * const rom = sfc_load_rom(data, stat.st_size, NULL, &load_map);
     if (rom == NULL)
     {
         fprintf(stderr, "Failed to load ROM\n");
+        free(data);
         return 2;
     }
     printf("Data: %p, Size: %zu\n", rom->data, rom->size);
