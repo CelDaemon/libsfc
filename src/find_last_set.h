@@ -48,7 +48,7 @@ static uint32_t find_last_set(uint32_t const x)
 #elif defined(_MSC_VER)
     unsigned long index;
     _BitScanReverse(&index, x);
-    return sizeof(uint32_t) * CHAR_BIT - index - 1;
+    return index;
 #else
     uint32_t a = x;
     uint32_t c = 0;
