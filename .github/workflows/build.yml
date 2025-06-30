@@ -17,6 +17,8 @@ jobs:
         name: Generate Build Scripts
       - run: cmake --build build --config "${{ matrix.profile }}"
         name: Build Project
+      - run: ctest --test-dir build --build-config "${{ matrix.profile }}"
+        name: Test Project
       - run: cmake --install build --prefix output --config "${{ matrix.profile }}"
       - uses: actions/upload-artifact@v4
         with:

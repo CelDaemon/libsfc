@@ -35,12 +35,13 @@
 #define PATH_SEPARATOR '/'
 #endif
 
-char const *parse_program_name(char const *path) {
-    if (path == NULL)
+char const *parse_program_name(int const argc, char *argv[]) {
+
+    if (argc < 1 || argv[0] == NULL)
         return "verify";
-    char const *name = strrchr(path, PATH_SEPARATOR);
+    char const *name = strrchr(argv[0], PATH_SEPARATOR);
     if (name == NULL)
-        return path;
+        return argv[0];
     return name + 1;
 }
 static char const *program_name;
@@ -51,6 +52,7 @@ static void print_usage(void) {
 
 int main(int const argc, char *argv[])
 {
+    program_name = parse_program_name(argc, argv);
     if (argc < 2) {
         print_usage();
         return 1;
