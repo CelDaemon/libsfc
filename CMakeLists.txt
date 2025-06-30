@@ -5,7 +5,7 @@ project(libsfc
         LANGUAGES C
 )
 
-enable_testing()
+include(CTest)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
