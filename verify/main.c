@@ -27,8 +27,6 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <getopt.h>
-
 #include <sfc.h>
 
 #ifdef _MSC_VER
@@ -45,12 +43,6 @@ char const *parse_program_name(char const *path) {
         return path;
     return name + 1;
 }
-
-struct option long_opts[] = {
-    {"verbose", no_argument, NULL, 'v'},
-    {NULL, no_argument, NULL, 0}
-};
-
 static char const *program_name;
 
 static void print_usage(void) {
@@ -59,47 +51,30 @@ static void print_usage(void) {
 
 int main(int const argc, char *argv[])
 {
-    program_name = parse_program_name(argv[0]);
-    bool verbose = false;
-    int opt;
-    while ((opt = getopt_long(argc, argv, "v", long_opts, NULL)) != -1) {
-        switch (opt) {
-            case 'v':
-                verbose = true;
-                break;
-            default:
-                break;
-        }
-    }
-    if (optind >= argc) {
+    if (argc < 2) {
         print_usage();
         return 1;
     }
-    struct sfc_rom * const rom = sfc_read_rom(argv[optind++], NULL, NULL);
+    struct sfc_rom * const rom = sfc_read_rom(argv[1], NULL, NULL);
     if (rom == NULL) {
         fprintf(stderr, "%s: Failed to load ROM\n", program_name);
         return 1;
     }
     struct sfc_header const * const header = sfc_rom_header(rom);
-    if (verbose) {
-        char title[SFC_HEADER_TITLE_MAX_SIZE + 1];
-        sfc_header_title(header, title);
-        fprintf(stderr, "ROM title: %s\n", title);
-    }
+    char title[SFC_HEADER_TITLE_MAX_SIZE + 1];
+    sfc_header_title(header, title);
+    printf("ROM title: %s\n", title);
     uint16_t const expected_checksum = sfc_header_checksum(header);
-    if (verbose)
-        fprintf(stderr, "Expected checksum: %" PRIX16 "\n", expected_checksum);
+    printf("Expected checksum: %" PRIX16 "\n", expected_checksum);
     uint16_t const calculated_checksum = sfc_checksum(rom);
-    if (verbose)
-        fprintf(stderr, "Calculated checksum: %" PRIX16 "\n", calculated_checksum);
+    printf("Calculated checksum: %" PRIX16 "\n", calculated_checksum);
+
 
     sfc_destroy_rom(rom);
     if (calculated_checksum == expected_checksum) {
-        if (verbose)
-            fprintf(stderr, "Match!");
+        printf("Match!");
         return 0;
     }
-    if (verbose)
-        fprintf(stderr, "Mismatch!");
+    printf("Mismatch!");
     return 1;
 }
