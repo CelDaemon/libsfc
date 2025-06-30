@@ -39,7 +39,7 @@
 
 struct sfc_rom *sfc_read_rom(char const * const path, bool const * const copier, enum sfc_map const * const map) {
     assert(path != NULL);
-    FILE * const file = fopen(path, "r");
+    FILE * const file = fopen(path, "rb");
     if (file == NULL)
         return NULL;
     struct stat stat;
