@@ -27,6 +27,9 @@
 
 
 int CanReadRom(void) {
-    struct sfc_rom const * const rom = sfc_read_rom("SMW.d.smc", NULL, NULL);
-    return rom == NULL;
+    struct sfc_rom * const rom = sfc_read_rom("SMW.d.smc", NULL, NULL);
+    if (rom == NULL)
+        return 1;
+    sfc_destroy_rom(rom);
+    return 0;
 }

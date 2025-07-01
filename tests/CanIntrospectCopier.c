@@ -33,9 +33,19 @@
 
 int CanIntrospectCopier(void) {
     FILE * const file = fopen("SMW.d.smc", "rb");
+    if (file == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+        return 1;
+    }
     struct stat stat;
-    fstat(fileno(file), &stat);
+
+    if (fstat(fileno(file), &stat) != 0) {
+        fprintf(stderr, "Failed to get file size\n");
+        return 1;
+    }
     fclose(file);
     bool const copier = sfc_introspect_copier(stat.st_size);
-    return copier == false;
+    if (copier != true)
+        return 1;
+    return 0;
 }
