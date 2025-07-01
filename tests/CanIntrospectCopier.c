@@ -24,30 +24,28 @@
 */
 
 #include <stdio.h>
-#include <sys/stat.h>
 
 #include "../src/map.h"
-#ifdef _MSC_VER
-#define fileno _fileno
-#endif
+
+#define MARIO_WORLD_SIZE 524800
+#define MARIO_WORLD_2_SIZE 2097152
+#define PRIMAL_RAGE_SIZE 3145728
+
+#define BOOL_STRING(val) ((val) ? "true" : "false")
+
+#define CHECK_SIZE(size, val) { \
+    bool const copier = sfc_introspect_copier((size));\
+    if(copier != (val)) {\
+        fprintf(stderr, "Size: %u, Expected: %s, Actual: %s\n", (size), BOOL_STRING((val)), BOOL_STRING(copier));\
+        return 1;\
+    }\
+}
 
 int CanIntrospectCopier(int const argc, char* const argv[]) {
     (void) argc;
     (void) argv;
-    FILE * const file = fopen(RESOURCE_DIR "/SMW.d.smc", "rb");
-    if (file == NULL) {
-        fprintf(stderr, "Failed to open file\n");
-        return 1;
-    }
-    struct stat stat;
-
-    if (fstat(fileno(file), &stat) != 0) {
-        fprintf(stderr, "Failed to get file size\n");
-        return 1;
-    }
-    fclose(file);
-    bool const copier = sfc_introspect_copier(stat.st_size);
-    if (copier != true)
-        return 1;
+    CHECK_SIZE(MARIO_WORLD_SIZE, true);
+    CHECK_SIZE(MARIO_WORLD_2_SIZE, false);
+    CHECK_SIZE(PRIMAL_RAGE_SIZE, false);
     return 0;
 }
