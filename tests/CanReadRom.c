@@ -26,8 +26,10 @@
 #include <sfc.h>
 
 
-int CanReadRom(void) {
-    struct sfc_rom * const rom = sfc_read_rom("SMW.d.smc", NULL, NULL);
+int CanReadRom(int const argc, char* const argv[]) {
+    (void) argc;
+    (void) argv;
+    struct sfc_rom * const rom = sfc_read_rom( RESOURCE_DIR "/SMW.d.smc", NULL, NULL);
     if (rom == NULL)
         return 1;
     sfc_destroy_rom(rom);

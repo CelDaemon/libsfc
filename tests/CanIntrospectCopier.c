@@ -31,8 +31,10 @@
 #define fileno _fileno
 #endif
 
-int CanIntrospectCopier(void) {
-    FILE * const file = fopen("SMW.d.smc", "rb");
+int CanIntrospectCopier(int const argc, char* const argv[]) {
+    (void) argc;
+    (void) argv;
+    FILE * const file = fopen(RESOURCE_DIR "/SMW.d.smc", "rb");
     if (file == NULL) {
         fprintf(stderr, "Failed to open file\n");
         return 1;

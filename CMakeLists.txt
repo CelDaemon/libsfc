@@ -5,7 +5,7 @@ project(libsfc
         LANGUAGES C
 )
 
-option(BUILD_TESTS "Build CTest tests" OFF)
+option(BUILD_TESTS "Build CTest tests" ON)
 
 if (BUILD_TESTS)
     enable_testing()
