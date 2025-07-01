@@ -23,31 +23,50 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef _SFC_TEST_UTIL_H
+#define _SFC_TEST_UTIL_H
+
+#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
-#include "util.h"
-#include "../src/map.h"
+#include <sfc.h>
 
-#define MARIO_WORLD_SIZE 524800
-#define MARIO_WORLD_2_SIZE 2097152
-#define PRIMAL_RAGE_SIZE 3145728
+#ifdef _MSC_VER
+#define FILENO _fileno
+#else
+#define FILENO fileno
+#endif
 
-#define BOOL_STRING(val) ((val) ? "true" : "false")
+#define ASSERT_TRUE(value) if(!(value))\
+    return 1;\
 
-static bool check_size(size_t const size, bool const val) {
-    bool const copier = sfc_deduce_copier((size));
-    if(copier != (val)) {\
-        fprintf(stderr, "Size: %zu, Expected: %s, Actual: %s\n", size, BOOL_STRING(val), BOOL_STRING(copier));
-        return false;
+#define RESOURCE(path) RESOURCE_DIR "/" path
+
+
+static inline void *read_file(char const *path, size_t *size)  {
+    FILE * const file = fopen(path, "rb");
+    if (file == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+        return NULL;
     }
-    return true;
+    struct stat stat;
+    if (fstat(FILENO(file), &stat) != 0) {
+        fprintf(stderr, "Failed to get file stats\n");
+        fclose(file);
+        return NULL;
+    }
+    void * const data = malloc(stat.st_size);
+    if (fread(data, stat.st_size, 1, file) != 1) {
+        fprintf(stderr, "Failed to read file data\n");
+        fclose(file);
+        free(data);
+        return NULL;
+    }
+    fclose(file);
+    *size = stat.st_size;
+    return data;
 }
 
-int can_deduce_copier(int const argc, char* const argv[]) {
-    (void) argc;
-    (void) argv;
-    ASSERT_TRUE(check_size(MARIO_WORLD_SIZE, true));
-    ASSERT_TRUE(check_size(MARIO_WORLD_2_SIZE, false));
-    ASSERT_TRUE(check_size(PRIMAL_RAGE_SIZE, false));
-    return 0;
-}
+#endif
