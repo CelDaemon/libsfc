@@ -27,8 +27,11 @@
 #include <sys/stat.h>
 
 #include "../src/map.h"
+#ifdef _MSC_VER
+#define fileno _fileno
+#endif
 
-int CanIntrospectCopier() {
+int CanIntrospectCopier(void) {
     FILE * const file = fopen("SMW.d.smc", "rb");
     struct stat stat;
     fstat(fileno(file), &stat);

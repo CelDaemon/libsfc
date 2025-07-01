@@ -23,8 +23,6 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <assert.h>
-#include <limits.h>
 #include <sfc.h>
 
 #include "find_last_set.h"

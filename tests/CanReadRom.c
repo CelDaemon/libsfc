@@ -26,7 +26,7 @@
 #include <sfc.h>
 
 
-int CanReadRom() {
+int CanReadRom(void) {
     struct sfc_rom const * const rom = sfc_read_rom("SMW.d.smc", NULL, NULL);
     return rom == NULL;
 }

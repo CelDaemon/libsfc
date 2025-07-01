@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         name: Checkout Repository
-      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+      - run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCMAKE_COMPILE_WARNING_AS_ERROR=ON -DBUILD_TESTS=ON
         name: Generate Build Scripts
       - run: cmake --build build --config "${{ matrix.profile }}"
         name: Build Project

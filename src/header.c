@@ -28,7 +28,6 @@
 #include <sfc.h>
 #include <stdint.h>
 #include <string.h>
-#include <assert.h>
 
 #include "offset.h"
 #include "find_last_set.h"
