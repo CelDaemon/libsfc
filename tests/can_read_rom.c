@@ -23,29 +23,15 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <stdio.h>
+#include <sfc.h>
 
-#include "../src/map.h"
 
-#define MARIO_WORLD_SIZE 524800
-#define MARIO_WORLD_2_SIZE 2097152
-#define PRIMAL_RAGE_SIZE 3145728
-
-#define BOOL_STRING(val) ((val) ? "true" : "false")
-
-#define CHECK_SIZE(size, val) { \
-    bool const copier = sfc_deduce_copier((size));\
-    if(copier != (val)) {\
-        fprintf(stderr, "Size: %u, Expected: %s, Actual: %s\n", (size), BOOL_STRING((val)), BOOL_STRING(copier));\
-        return 1;\
-    }\
-}
-
-int CanDeduceCopier(int const argc, char* const argv[]) {
+int can_read_rom(int const argc, char* const argv[]) {
     (void) argc;
     (void) argv;
-    CHECK_SIZE(MARIO_WORLD_SIZE, true);
-    CHECK_SIZE(MARIO_WORLD_2_SIZE, false);
-    CHECK_SIZE(PRIMAL_RAGE_SIZE, false);
+    struct sfc_rom * const rom = sfc_read_rom( RESOURCE_DIR "/SMW.d.smc", NULL, NULL);
+    if (rom == NULL)
+        return 1;
+    sfc_destroy_rom(rom);
     return 0;
 }
