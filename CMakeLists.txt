@@ -5,7 +5,7 @@ project(libsfc
         LANGUAGES C
 )
 
-include(CTest)
+enable_testing()
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -35,3 +35,6 @@ install(TARGETS sfc)
 add_subdirectory(example)
 add_subdirectory(verify)
 add_subdirectory(mangle)
+if (BUILD_TESTING)
+    add_subdirectory(tests)
+endif ()
