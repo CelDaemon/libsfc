@@ -34,14 +34,14 @@
 #define BOOL_STRING(val) ((val) ? "true" : "false")
 
 #define CHECK_SIZE(size, val) { \
-    bool const copier = sfc_introspect_copier((size));\
+    bool const copier = sfc_deduce_copier((size));\
     if(copier != (val)) {\
         fprintf(stderr, "Size: %u, Expected: %s, Actual: %s\n", (size), BOOL_STRING((val)), BOOL_STRING(copier));\
         return 1;\
     }\
 }
 
-int CanIntrospectCopier(int const argc, char* const argv[]) {
+int CanDeduceCopier(int const argc, char* const argv[]) {
     (void) argc;
     (void) argv;
     CHECK_SIZE(MARIO_WORLD_SIZE, true);

@@ -88,11 +88,11 @@ struct sfc_rom *sfc_read_rom(char const * const path, bool const * const copier,
 struct sfc_rom *sfc_load_rom(void * const data, size_t const size, const bool * const copier, const enum sfc_map * const map)
 {
     assert(data != NULL);
-    bool const final_copier = copier != NULL ? *copier : sfc_introspect_copier(size);
+    bool const final_copier = copier != NULL ? *copier : sfc_deduce_copier(size);
     size_t const copier_offset = final_copier ? SFC_COPIER_SIZE : 0;
     size_t const memory_size = size - copier_offset;
     void * const memory = OFFSET_POINTER(data, copier_offset);
-    enum sfc_map const final_map = map != NULL ? *map : sfc_introspect_map(memory, memory_size);
+    enum sfc_map const final_map = map != NULL ? *map : sfc_deduce_map(memory, memory_size);
 
     if (!sfc_header_available(final_map, memory_size))
         return NULL;

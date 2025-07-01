@@ -1,6 +1,6 @@
 set(TEST_SOURCES
         CanReadRom.c
-        CanIntrospectCopier.c
+        CanDeduceCopier.c
 )
 
 create_test_sourcelist(TESTS main.c ${TEST_SOURCES})

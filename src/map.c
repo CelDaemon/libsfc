@@ -51,7 +51,7 @@ size_t sfc_header_offset(enum sfc_map const map)
     }
 }
 
-bool sfc_introspect_copier(size_t const size)
+bool sfc_deduce_copier(size_t const size)
 {
     return (size & 512) > 0;
 }
@@ -62,7 +62,7 @@ bool sfc_header_available(enum sfc_map const map, size_t const size)
     return offset + 0xFF < size;
 }
 
-enum sfc_map sfc_introspect_map(void const * const data, size_t const size)
+enum sfc_map sfc_deduce_map(void const * const data, size_t const size)
 {
     assert(data != NULL);
     (void)data;
