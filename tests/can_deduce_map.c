@@ -63,5 +63,8 @@ int can_deduce_map(int const argc, char * const argv[]) {
     (void) argc;
     (void) argv;
     ASSERT_TRUE(check_map(RESOURCE("SMW.d.smc"), SFC_MAP_LO));
+    ASSERT_TRUE(check_map(RESOURCE("SMW2.d.smc"), SFC_MAP_LO));
+    ASSERT_TRUE(check_map(RESOURCE("PRAGE.d.smc"), SFC_MAP_HI));
+    ASSERT_TRUE(check_map(RESOURCE("SD3.d.smc"), SFC_MAP_HI));
     return 0;
 }
