@@ -1,0 +1,28 @@
+name: Build
+on:
+  push:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        profile: [debug, release]
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Generate build files
+        run: cmake -B build -DCMAKE_BUILD_TYPE="${{ matrix.profile }}" -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+      - name: Build project
+        run: cmake --build build --config "${{ matrix.profile }}"
+      - name: Gather outputs
+        run: cmake --install build --prefix output --config "${{ matrix.profile }}"
+      - name: Upload outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'output-${{ matrix.os }}-${{ matrix.profile }}'
+          path: output
+
+
