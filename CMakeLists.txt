@@ -9,3 +9,4 @@ set(CMAKE_C_EXTENSIONS OFF)
 file(GLOB SOURCE_FILES CONFIGURE_DEPENDS src/*.c src/*.h)
 
 add_library(sfc STATIC ${SOURCE_FILES})
+install(TARGETS sfc)
